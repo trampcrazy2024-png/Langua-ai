@@ -28,10 +28,10 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Build Debug APK
-        run: gradle :app:assembleDebug
+        run: gradle assembleDebug || gradle assemble
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-vpn-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: '**/build/outputs/apk/**/*.apk'
