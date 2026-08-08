@@ -2,6 +2,8 @@ package com.example.vpn
 
 import android.app.Application
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -27,24 +29,31 @@ class VpnApplication : Application(), Configuration.Provider {
 
     override val workManagerConfiguration: Configuration
         get() {
-            val builder = Configuration.Builder()
-                .setMinimumLoggingLevel(Log.INFO)
-            if (::workerFactory.isInitialized) {
-                builder.setWorkerFactory(workerFactory)
+            return try {
+                val builder = Configuration.Builder()
+                    .setMinimumLoggingLevel(Log.INFO)
+                if (::workerFactory.isInitialized) {
+                    builder.setWorkerFactory(workerFactory)
+                }
+                builder.build()
+            } catch (e: Throwable) {
+                Log.e(TAG, "Error building WorkManager configuration", e)
+                Configuration.Builder().build()
             }
-            return builder.build()
         }
 
     override fun onCreate() {
         super.onCreate()
+        Log.i(TAG, "Application created successfully on Android ${Build.VERSION.SDK_INT}")
         
-        Log.i(TAG, "Application started on Android ${Build.VERSION.SDK_INT}")
-        
-        try {
-            scheduleConfigUpdates()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to schedule background workers", e)
-        }
+        // اجرا بدون بلاک کردن ترد اصلی جهت جلوگیری از هنگ و کراش استارت‌آپ
+        Handler(Looper.getMainLooper()).postDelayed({
+            try {
+                scheduleConfigUpdates()
+            } catch (e: Throwable) {
+                Log.e(TAG, "Safe catch during delayed background worker scheduling", e)
+            }
+        }, 3000)
     }
 
     private fun scheduleConfigUpdates() {
@@ -62,8 +71,9 @@ class VpnApplication : Application(), Configuration.Provider {
                 ExistingPeriodicWorkPolicy.UPDATE,
                 request
             )
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to schedule config update worker", e)
+            Log.i(TAG, "ConfigUpdateWorker scheduled successfully")
+        } catch (e: Throwable) {
+            Log.e(TAG, "WorkManager initialization or scheduling skipped safely", e)
         }
     }
 }
