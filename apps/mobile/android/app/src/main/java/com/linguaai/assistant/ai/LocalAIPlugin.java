@@ -7,3 +7,4 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "LocalAI")
 public class LocalAIPlugin extends Plugin {
+}
