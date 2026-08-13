@@ -1,8 +1,9 @@
-package com.linguaai.assistant.ai;
+package com.linguaai.assistant;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "LocalAI")
@@ -11,15 +12,19 @@ public class LocalAIPlugin extends Plugin {
     private boolean modelLoaded = false;
     private String modelPath = null;
 
-    @Override
-    public void load() {
-        super.load();
-    }
-
     @PluginMethod
     public void isAvailable(PluginCall call) {
         JSObject result = new JSObject();
         result.put("value", true);
+        call.resolve(result);
+    }
+
+    @PluginMethod
+    public void healthCheck(PluginCall call) {
+        JSObject result = new JSObject();
+        result.put("available", true);
+        result.put("modelLoaded", modelLoaded);
+        result.put("modelPath", modelPath);
         call.resolve(result);
     }
 
@@ -37,7 +42,7 @@ public class LocalAIPlugin extends Plugin {
 
         JSObject result = new JSObject();
         result.put("loaded", true);
-        result.put("path", path);
+        result.put("path", modelPath);
 
         call.resolve(result);
     }
@@ -60,55 +65,21 @@ public class LocalAIPlugin extends Plugin {
             return;
         }
 
-        String prompt = call.getString("prompt", "");
+        String prompt = call.getString("prompt");
 
-        if (prompt.trim().isEmpty()) {
+        if (prompt == null || prompt.trim().isEmpty()) {
             call.reject("Prompt is empty");
             return;
         }
 
-        String systemPrompt =
-                call.getString("systemPrompt", "");
-
-        JSObject options =
-                call.getObject("options", new JSObject());
-
         JSObject result = new JSObject();
 
         result.put(
-                "value",
-                "Local AI runtime bridge is ready."
+            "value",
+            "Local AI runtime bridge is ready."
         );
 
-        result.put(
-                "modelLoaded",
-                true
-        );
-
-        result.put(
-                "modelPath",
-                modelPath
-        );
-
-        result.put(
-                "systemPromptReceived",
-                !systemPrompt.isEmpty()
-        );
-
-        result.put(
-                "optionsReceived",
-                options != null
-        );
-
-        call.resolve(result);
-    }
-
-    @PluginMethod
-    public void healthCheck(PluginCall call) {
-        JSObject result = new JSObject();
-
-        result.put("available", true);
-        result.put("modelLoaded", modelLoaded);
+        result.put("modelLoaded", true);
         result.put("modelPath", modelPath);
 
         call.resolve(result);
