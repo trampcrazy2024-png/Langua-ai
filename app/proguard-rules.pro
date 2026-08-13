@@ -1,5 +1,0 @@
--keep class com.example.vpn.native.SingBoxBridge { *; }
--keep class com.example.vpn.native.SingBoxBridge$TunnelCallback { *; }
--keepclassmembers class com.example.vpn.native.SingBoxBridge { native <methods>; }
--keep class android.net.VpnService { *; }
--keep class com.example.vpn.service.CoreVpnService { *; }
