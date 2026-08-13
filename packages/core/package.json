@@ -6,6 +6,6 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "dependencies": {
-    "@lingua/shared": "workspace:*"
+    "@lingua/shared": "0.1.0"
   }
 }
