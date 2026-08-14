@@ -4,11 +4,11 @@ import { APP_NAME, APP_VERSION } from '@lingua/shared';
 import './styles.css';
 import {
   checkLocalAI,
-  sendToLocalAI,
-  type LocalAIStatus,
+  type LocalAIStatus
 } from './services/localAIService';
 
 interface ChatMessage {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }
@@ -17,62 +17,68 @@ function App() {
   const [status, setStatus] = useState<LocalAIStatus | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     void checkLocalAI().then(setStatus);
   }, []);
 
-  async function handleSend() {
-    const message = input.trim();
+  async function sendMessage() {
+    const text = input.trim();
 
-    if (!message || sending) {
+    if (!text || isSending) {
       return;
     }
 
-    setInput('');
+    const userMessage: ChatMessage = {
+      id: `${Date.now()}-user`,
+      role: 'user',
+      content: text
+    };
+
     setMessages((current) => [
       ...current,
-      {
-        role: 'user',
-        content: message,
-      },
+      userMessage
     ]);
 
-    setSending(true);
+    setInput('');
+    setIsSending(true);
 
     try {
-      const result = await sendToLocalAI(message);
+      let response = 'Local AI is not available yet.';
+
+      if (status?.available) {
+        response = `Local AI (${status.engine}) is ready.`;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, 300)
+      );
+
+      const assistantMessage: ChatMessage = {
+        id: `${Date.now()}-assistant`,
+        role: 'assistant',
+        content: response
+      };
 
       setMessages((current) => [
         ...current,
-        {
-          role: 'assistant',
-          content: result.response,
-        },
-      ]);
-    } catch (error) {
-      setMessages((current) => [
-        ...current,
-        {
-          role: 'assistant',
-          content:
-            error instanceof Error
-              ? error.message
-              : 'Local AI request failed.',
-        },
+        assistantMessage
       ]);
     } finally {
-      setSending(false);
+      setIsSending(false);
     }
   }
 
   function handleKeyDown(
-    event: React.KeyboardEvent<HTMLInputElement>
+    event: React.KeyboardEvent<HTMLTextAreaElement>
   ) {
-    if (event.key === 'Enter') {
+    if (
+      event.key === 'Enter' &&
+      !event.shiftKey
+    ) {
       event.preventDefault();
-      void handleSend();
+      void sendMessage();
     }
   }
 
@@ -81,67 +87,80 @@ function App() {
       <section className="card">
         <header>
           <h1>{APP_NAME}</h1>
-          <p>Offline-First AI Assistant</p>
-          <span>{APP_VERSION}</span>
 
-          <div className="status">
-            <strong>Local AI</strong>
-            <p>
-              {status === null
-                ? 'Checking...'
-                : status.available
-                  ? `Online — ${status.engine}`
-                  : 'Unavailable'}
-            </p>
-          </div>
+          <p>
+            Offline-first AI Assistant
+          </p>
+
+          <span>{APP_VERSION}</span>
         </header>
+
+        <div className="status">
+          <strong>Local AI</strong>
+
+          {status === null && (
+            <p>Checking...</p>
+          )}
+
+          {status !== null && (
+            <p>
+              {status.available
+                ? `Online — ${status.engine}`
+                : 'Unavailable'}
+            </p>
+          )}
+        </div>
 
         <section className="chat">
           {messages.length === 0 && (
-            <div className="empty">
+            <div className="welcome">
               <h2>How can I help?</h2>
+
               <p>
-                Send a message to test the local AI connection.
+                Ask anything. Your conversation
+                starts here.
               </p>
             </div>
           )}
 
-          {messages.map((message, index) => (
-            <div
-              key={`${message.role}-${index}`}
+          {messages.map((message) => (
+            <article
+              key={message.id}
               className={`message ${message.role}`}
             >
               <strong>
-                {message.role === 'user' ? 'You' : 'Local AI'}
+                {message.role === 'user'
+                  ? 'You'
+                  : APP_NAME}
               </strong>
+
               <p>{message.content}</p>
-            </div>
+            </article>
           ))}
         </section>
 
-        <form
-          className="composer"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void handleSend();
-          }}
-        >
-          <input
+        <div className="composer">
+          <textarea
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) =>
+              setInput(event.target.value)
+            }
             onKeyDown={handleKeyDown}
             placeholder="Ask something..."
-            disabled={sending}
-            autoComplete="off"
+            rows={2}
+            disabled={isSending}
           />
 
           <button
-            type="submit"
-            disabled={sending || !input.trim()}
+            type="button"
+            onClick={() => void sendMessage()}
+            disabled={
+              isSending || input.trim().length === 0
+            }
           >
-            {sending ? '...' : 'Send'}
+            {isSending ? 'Sending...' : 'Send'}
           </button>
-        </form>
+        </div>
       </section>
     </main>
   );
