@@ -3,10 +3,8 @@ export interface DatabaseRow {
 }
 
 export interface DatabaseResult {
-  changes?: {
-    changes?: number;
-    lastId?: number;
-  };
+  changes?: number;
+  lastId?: number;
   values?: DatabaseRow[];
 }
 
@@ -17,6 +15,13 @@ export interface Migration {
 }
 
 export interface DatabaseExecutor {
-  execute(sql: string, values?: unknown[]): Promise<DatabaseResult>;
-  query(sql: string, values?: unknown[]): Promise<DatabaseResult>;
+  execute(
+    sql: string,
+    values?: unknown[]
+  ): Promise<DatabaseResult>;
+
+  query(
+    sql: string,
+    values?: unknown[]
+  ): Promise<DatabaseResult>;
 }
