@@ -4,15 +4,12 @@ import {
   type SQLiteDBConnection
 } from '@capacitor-community/sqlite';
 
-export interface DatabaseResult {
-  values?: Array<Record<string, unknown>>;
-  changes?: {
-    changes?: number;
-    lastId?: number;
-  };
-}
+import type {
+  DatabaseExecutor,
+  DatabaseResult
+} from './types';
 
-export class DatabaseManager {
+export class DatabaseManager implements DatabaseExecutor {
   private readonly sqlite = new SQLiteConnection(CapacitorSQLite);
   private connection: SQLiteDBConnection | null = null;
 
@@ -47,11 +44,16 @@ export class DatabaseManager {
     sql: string,
     values: unknown[] = []
   ): Promise<DatabaseResult> {
-    const result = await this.getConnection().run(sql, values);
+    const connection = this.getConnection();
+
+    const result = await connection.run(
+      sql,
+      values
+    );
 
     return {
-      values: result.values as Array<Record<string, unknown>> | undefined,
-      changes: result.changes
+      changes: result.changes,
+      values: result.values as DatabaseResult['values']
     };
   }
 
@@ -59,10 +61,15 @@ export class DatabaseManager {
     sql: string,
     values: unknown[] = []
   ): Promise<DatabaseResult> {
-    const result = await this.getConnection().query(sql, values);
+    const connection = this.getConnection();
+
+    const result = await connection.query(
+      sql,
+      values
+    );
 
     return {
-      values: result.values as Array<Record<string, unknown>> | undefined
+      values: result.values as DatabaseResult['values']
     };
   }
 
