@@ -1,12 +1,11 @@
 import type { DatabaseManager } from '../DatabaseManager';
-import type { DatabaseRow } from '../types';
 
 export abstract class BaseRepository {
   constructor(
     protected readonly database: DatabaseManager
   ) {}
 
-  protected async query<T extends DatabaseRow>(
+  protected async query<T>(
     sql: string,
     values: unknown[] = []
   ): Promise<T[]> {
