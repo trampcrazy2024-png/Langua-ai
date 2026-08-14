@@ -2,138 +2,96 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { APP_NAME, APP_VERSION } from '@lingua/shared';
 import './styles.css';
+import LocalAI from './services/localAI';
 import {
   checkLocalAI,
   type LocalAIStatus
 } from './services/localAIService';
 
-interface Message {
-  id: string;
-  role: 'assistant' | 'user';
-  content: string;
-}
-
 function App() {
   const [status, setStatus] = useState<LocalAIStatus | null>(null);
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: 'Hello! How can I help you today?'
-    }
-  ]);
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     void checkLocalAI().then(setStatus);
   }, []);
 
-  function sendMessage() {
-    const text = input.trim();
+  async function sendMessage() {
+    const text = message.trim();
 
-    if (!text) {
+    if (!text || loading) {
       return;
     }
 
-    const userMessage: Message = {
-      id: `${Date.now()}-user`,
-      role: 'user',
-      content: text
-    };
+    setLoading(true);
+    setResponse('');
 
-    setMessages((current) => [
-      ...current,
-      userMessage
-    ]);
+    try {
+      const result = await LocalAI.chat({
+        message: text
+      });
 
-    setInput('');
-
-    const assistantMessage: Message = {
-      id: `${Date.now()}-assistant`,
-      role: 'assistant',
-      content: status?.available
-        ? `Local AI (${status.engine}) is ready.`
-        : 'Local AI is currently unavailable.'
-    };
-
-    setMessages((current) => [
-      ...current,
-      assistantMessage
-    ]);
-  }
-
-  function handleKeyDown(
-    event: React.KeyboardEvent<HTMLTextAreaElement>
-  ) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
+      setResponse(result.response);
+    } catch (error) {
+      setResponse(
+        error instanceof Error
+          ? error.message
+          : 'Local AI request failed.'
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <main className="app">
-      <section className="assistant">
-        <header className="header">
-          <div>
-            <h1>{APP_NAME}</h1>
-            <p>Offline-first AI Assistant</p>
-          </div>
+      <section className="card">
+        <h1>{APP_NAME}</h1>
 
-          <span className="version">
-            v{APP_VERSION}
-          </span>
-        </header>
+        <p>Offline-first AI Assistant</p>
 
-        <div className="ai-status">
-          <span
-            className={
-              status?.available
-                ? 'status-dot online'
-                : 'status-dot'
-            }
-          />
+        <span>{APP_VERSION}</span>
 
-          <span>
-            {status === null
-              ? 'Checking Local AI...'
-              : status.available
-                ? `Local AI · ${status.engine}`
-                : 'Local AI unavailable'}
-          </span>
+        <div className="status">
+          <strong>Local AI:</strong>
+
+          {status === null && <p>Checking...</p>}
+
+          {status !== null && (
+            <p>
+              {status.available
+                ? `Ready — ${status.engine}`
+                : 'Unavailable'}
+            </p>
+          )}
         </div>
 
-        <section className="messages">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`message ${message.role}`}
-            >
-              {message.content}
-            </div>
-          ))}
-        </section>
-
-        <footer className="composer">
+        <div className="chat">
           <textarea
-            value={input}
-            onChange={(event) =>
-              setInput(event.target.value)
-            }
-            onKeyDown={handleKeyDown}
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
             placeholder="Ask something..."
-            rows={1}
-            aria-label="Message"
+            rows={4}
+            disabled={loading}
           />
 
           <button
             type="button"
-            onClick={sendMessage}
-            disabled={!input.trim()}
+            onClick={() => void sendMessage()}
+            disabled={loading || !message.trim()}
           >
-            Send
+            {loading ? 'Thinking...' : 'Send'}
           </button>
-        </footer>
+
+          {response && (
+            <div className="response">
+              <strong>Local AI</strong>
+              <p>{response}</p>
+            </div>
+          )}
+        </div>
       </section>
     </main>
   );
