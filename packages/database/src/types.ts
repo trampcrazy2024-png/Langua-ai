@@ -3,15 +3,9 @@ export interface DatabaseRow {
 }
 
 export interface DatabaseResult {
-  changes?: number;
-  lastId?: number;
-  values?: DatabaseRow[];
-}
-
-export interface Migration {
-  version: number;
-  name: string;
-  up(database: DatabaseExecutor): Promise<void>;
+  changes?: number | undefined;
+  lastId?: number | undefined;
+  values?: DatabaseRow[] | undefined;
 }
 
 export interface DatabaseExecutor {
