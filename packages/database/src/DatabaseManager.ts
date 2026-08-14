@@ -52,10 +52,7 @@ export class DatabaseManager implements DatabaseExecutor {
     );
 
     return {
-      changes:
-        result.changes !== undefined
-          ? Number(result.changes)
-          : undefined
+      changes: Number(result.changes)
     };
   }
 
@@ -70,11 +67,12 @@ export class DatabaseManager implements DatabaseExecutor {
       values
     );
 
+    if (result.values === undefined) {
+      return {};
+    }
+
     return {
-      values:
-        result.values !== undefined
-          ? (result.values as DatabaseResult['values'])
-          : undefined
+      values: result.values as DatabaseResult['values']
     };
   }
 
