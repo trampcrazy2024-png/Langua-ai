@@ -17,17 +17,28 @@ export interface LocalAIHealthResult {
   available: boolean;
   modelLoaded: boolean;
   modelPath: string | null;
+  engine?: string;
+}
+
+export interface LocalAIModelPickerResult {
+  ok: boolean;
+  uri: string;
+  path: string;
+  name: string;
+  size: number;
 }
 
 export interface LocalAILoadResult {
   ok: boolean;
   loaded: boolean;
-  modelPath: string;
+  path: string;
+  engine: string;
 }
 
 export interface LocalAIUnloadResult {
   ok: boolean;
   loaded: boolean;
+  engine?: string;
 }
 
 export interface LocalAIGenerateResult {
@@ -43,6 +54,8 @@ export interface LocalAIPlugin {
   isAvailable(): Promise<LocalAIAvailabilityResult>;
 
   healthCheck(): Promise<LocalAIHealthResult>;
+
+  pickModel(): Promise<LocalAIModelPickerResult>;
 
   loadModel(options: {
     path: string;
