@@ -33,7 +33,7 @@ function App() {
         message: text
       });
 
-      setResponse(result.response);
+      setResponse(result.value);
     } catch (error) {
       setResponse(
         error instanceof Error
