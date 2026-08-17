@@ -68,7 +68,7 @@ public class LocalAIPlugin extends Plugin {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
-        startActivityForResult(intent, "modelPickerResult", call);
+        startActivityForResult(call, intent, "modelPickerResult");
     }
 
     @ActivityCallback
