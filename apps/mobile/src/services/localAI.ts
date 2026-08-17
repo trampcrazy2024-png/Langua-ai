@@ -3,7 +3,6 @@ import { registerPlugin } from '@capacitor/core';
 export interface LocalAIPingResult {
   ok: boolean;
   engine: string;
-  native?: boolean;
 }
 
 export interface LocalAIAvailabilityResult {
@@ -17,7 +16,7 @@ export interface LocalAIHealthResult {
   available: boolean;
   modelLoaded: boolean;
   modelPath: string | null;
-  engine?: string;
+  engine: string;
 }
 
 export interface LocalAIModelPickerResult {
@@ -38,7 +37,7 @@ export interface LocalAILoadResult {
 export interface LocalAIUnloadResult {
   ok: boolean;
   loaded: boolean;
-  engine?: string;
+  engine: string;
 }
 
 export interface LocalAIGenerateResult {

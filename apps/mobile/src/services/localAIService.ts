@@ -3,7 +3,6 @@ import LocalAI from './localAI';
 export interface LocalAIStatus {
   available: boolean;
   engine: string;
-  native: boolean;
   modelLoaded: boolean;
   modelPath: string | null;
 }
@@ -14,9 +13,8 @@ export async function checkLocalAI(): Promise<LocalAIStatus> {
     const ping = await LocalAI.ping();
 
     return {
-      available: ping.ok === true && health.available === true,
-      engine: ping.engine || 'LocalAI',
-      native: ping.native === true,
+      available: health.available === true && ping.ok === true,
+      engine: ping.engine || health.engine || 'LocalAI',
       modelLoaded: health.modelLoaded === true,
       modelPath: health.modelPath ?? null,
     };
@@ -24,7 +22,6 @@ export async function checkLocalAI(): Promise<LocalAIStatus> {
     return {
       available: false,
       engine: 'LocalAI',
-      native: false,
       modelLoaded: false,
       modelPath: null,
     };
