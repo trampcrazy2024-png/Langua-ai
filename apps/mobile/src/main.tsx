@@ -15,6 +15,11 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [error, setError] = useState('');
+  const [importedModel, setImportedModel] = useState<{
+    path: string;
+    name: string;
+    size: number;
+  } | null>(null);
 
   useEffect(() => {
     void refreshStatus();
@@ -25,7 +30,7 @@ function App() {
     setStatus(nextStatus);
   }
 
-  async function selectModel() {
+  async function importModel() {
     if (modelLoading || loading) {
       return;
     }
@@ -35,14 +40,54 @@ function App() {
     setModelLoading(true);
 
     try {
+      /*
+       * IMPORTANT:
+       * This step ONLY imports/copies the GGUF file.
+       *
+       * It intentionally does NOT call nativeLoadModel().
+       * This lets us determine whether the Android crash happens
+       * during file import or during llama.cpp model loading.
+       */
       const selected = await LocalAI.pickModel();
 
       if (!selected.ok || !selected.path) {
         throw new Error('No model was selected.');
       }
 
+      setImportedModel({
+        path: selected.path,
+        name: selected.name || selected.path.split('/').pop() || 'model.gguf',
+        size: selected.size || 0
+      });
+
+      await refreshStatus();
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to import the model.'
+      );
+    } finally {
+      setModelLoading(false);
+    }
+  }
+
+  async function loadImportedModel() {
+    if (modelLoading || loading || !importedModel) {
+      return;
+    }
+
+    setError('');
+    setResponse('');
+    setModelLoading(true);
+
+    try {
+      /*
+       * This is now the ONLY place where nativeLoadModel()
+       * can be called from the UI.
+       */
       const loaded = await LocalAI.loadModel({
-        path: selected.path
+        path: importedModel.path
       });
 
       if (!loaded.ok || !loaded.loaded) {
@@ -54,7 +99,7 @@ function App() {
       setError(
         error instanceof Error
           ? error.message
-          : 'Failed to select or load the model.'
+          : 'Failed to load the model.'
       );
     } finally {
       setModelLoading(false);
@@ -146,20 +191,41 @@ function App() {
               </p>
             </>
           )}
+
+          {importedModel && !isModelLoaded && (
+            <p>
+              Imported:{' '}
+              <strong>{importedModel.name}</strong>
+            </p>
+          )}
         </div>
 
         <div className="model-controls">
           <button
             type="button"
-            onClick={() => void selectModel()}
-            disabled={modelLoading || loading || !status?.available}
+            onClick={() => void importModel()}
+            disabled={
+              modelLoading ||
+              loading ||
+              !status?.available
+            }
           >
             {modelLoading
-              ? 'Loading...'
-              : isModelLoaded
-                ? 'Change GGUF Model'
-                : 'Select GGUF Model'}
+              ? 'Importing...'
+              : 'Import GGUF Model'}
           </button>
+
+          {importedModel && !isModelLoaded && (
+            <button
+              type="button"
+              onClick={() => void loadImportedModel()}
+              disabled={modelLoading || loading}
+            >
+              {modelLoading
+                ? 'Loading...'
+                : 'Load Model'}
+            </button>
+          )}
 
           {isModelLoaded && (
             <button
@@ -179,7 +245,7 @@ function App() {
             placeholder={
               isModelLoaded
                 ? 'Ask something...'
-                : 'Select a GGUF model first...'
+                : 'Load a GGUF model first...'
             }
             rows={4}
             disabled={loading || !isModelLoaded}
@@ -200,14 +266,14 @@ function App() {
 
           {error && (
             <div className="response">
-              <strong>Error</strong>
+              <strong>Error:</strong>
               <p>{error}</p>
             </div>
           )}
 
           {response && (
             <div className="response">
-              <strong>Local AI</strong>
+              <strong>Local AI:</strong>
               <p>{response}</p>
             </div>
           )}
