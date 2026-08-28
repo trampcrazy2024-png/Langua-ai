@@ -5,8 +5,12 @@ const config: CapacitorConfig = {
   appName: 'Lingua Assistant',
   webDir: 'apps/mobile/dist',
   bundledWebRuntime: false,
+  server: {
+    androidScheme: 'https'
+  },
   android: {
-    backgroundColor: '#101114'
+    backgroundColor: '#020617',
+    allowMixedContent: false
   }
 };
 
