@@ -1,26 +1,41 @@
-name: Build Android VPN APK
+name: Build Android APK
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches:
+      - main
+      - release-candidate-01
+  pull_request:
+    branches:
+      - main
+      - release-candidate-01
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build & Release APK
+  build-android:
+    name: Build Debug APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle 8.5
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.5'
@@ -28,11 +43,78 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Debug APK
-        run: gradle assembleDebug || gradle assemble
+      - name: Install Android SDK components
+        run: |
+          sdkmanager --licenses > /dev/null || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "cmake;3.22.1" \
+            "ndk;27.0.12077973"
 
-      - name: Upload Debug APK Artifact
+      - name: Verify toolchain
+        run: |
+          echo "===== JAVA ====="
+          java -version
+
+          echo "===== GRADLE ====="
+          gradle --version
+
+          echo "===== CMAKE ====="
+          cmake --version
+
+          echo "===== NDK ====="
+          ls -lah "$ANDROID_HOME/ndk" || true
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install llama.cpp
+        run: bash scripts/install_llama.sh
+
+      - name: Verify llama.cpp
+        run: |
+          echo "===== LLAMA CPP ====="
+          test -f third-party/llama.cpp/CMakeLists.txt
+          test -f third-party/llama.cpp/include/llama.h
+
+          echo "llama.cpp source:"
+          du -sh third-party/llama.cpp
+
+          echo "llama.cpp build:"
+          du -sh third-party/llama.cpp/build 2>/dev/null || true
+
+      - name: Build web app and sync into Android
+        run: npm run android:sync
+
+      - name: Verify Android project
+        working-directory: android
+        run: |
+          echo "===== ANDROID PROJECT ====="
+          test -f settings.gradle
+          test -f app/build.gradle
+          test -f app/src/main/cpp/CMakeLists.txt
+          test -f app/src/main/cpp/localai_jni.cpp
+
+      - name: Clean Android build
+        working-directory: android
+        run: ./gradlew clean
+
+      - name: Build Debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Verify APK
+        run: |
+          echo "===== APK OUTPUT ====="
+          find android/app/build/outputs/apk -type f -name "*.apk" -print
+
+          test -n "$(find android/app/build/outputs/apk -type f -name "*.apk" -print -quit)"
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-vpn-debug-apk
-          path: '**/build/outputs/apk/**/*.apk'
+          name: lingua-assistant-debug-apk
+          path: android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
