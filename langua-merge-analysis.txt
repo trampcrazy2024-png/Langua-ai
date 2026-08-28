@@ -1,0 +1,2058 @@
+]633;E;echo "============================================================";15105ad8-da7f-4d5c-9a44-46c4d613bdcc]633;C============================================================
+LINGUA AI — RELEASE CANDIDATE MERGE ANALYSIS
+Generated: Fri Aug 28 16:55:23 UTC 2026
+Branch: release-candidate-01
+============================================================
+
+===== GIT STATUS =====
+?? langua-merge-analysis.txt
+
+===== HEAD =====
+61c0fe3 (HEAD -> release-candidate-01, backup-before-rc) checkpoint before release candidate merge
+
+===== FILE COUNTS =====
+Only new:    127
+Repo only:   
+Common:      32
+
+===== ONLY IN CURRENT REPOSITORY =====
+
+===== ONLY IN NEW SOURCE =====
+FINAL_RELEASE_REPORT.md
+MERGE_REPORT.md
+MODEL_ARCHITECTURE.md
+README.md
+aiRouter.test.ts
+aiRouter.ts
+android/.gitignore
+android/app/.gitignore
+android/app/build.gradle
+android/app/capacitor.build.gradle
+android/app/proguard-rules.pro
+android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java
+android/app/src/main/AndroidManifest.xml
+android/app/src/main/cpp/CMakeLists.txt
+android/app/src/main/cpp/localai_jni.cpp
+android/app/src/main/java/com/lingua/assistant/MainActivity.java
+android/app/src/main/java/com/lingua/assistant/plugins/LocalAIPlugin.java
+android/app/src/main/res/drawable-land-hdpi/splash.png
+android/app/src/main/res/drawable-land-mdpi/splash.png
+android/app/src/main/res/drawable-land-xhdpi/splash.png
+android/app/src/main/res/drawable-land-xxhdpi/splash.png
+android/app/src/main/res/drawable-land-xxxhdpi/splash.png
+android/app/src/main/res/drawable-port-hdpi/splash.png
+android/app/src/main/res/drawable-port-mdpi/splash.png
+android/app/src/main/res/drawable-port-xhdpi/splash.png
+android/app/src/main/res/drawable-port-xxhdpi/splash.png
+android/app/src/main/res/drawable-port-xxxhdpi/splash.png
+android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml
+android/app/src/main/res/drawable/ic_launcher_background.xml
+android/app/src/main/res/drawable/splash.png
+android/app/src/main/res/layout/activity_main.xml
+android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+android/app/src/main/res/values/ic_launcher_background.xml
+android/app/src/main/res/values/strings.xml
+android/app/src/main/res/values/styles.xml
+android/app/src/main/res/xml/file_paths.xml
+android/app/src/test/java/com/getcapacitor/myapp/ExampleUnitTest.java
+android/build.gradle
+android/capacitor.settings.gradle
+android/gradle.properties
+android/gradle/wrapper/gradle-wrapper.jar
+android/gradle/wrapper/gradle-wrapper.properties
+android/gradlew
+android/gradlew.bat
+android/settings.gradle
+android/variables.gradle
+apps/mobile/src/App.tsx
+apps/mobile/src/accentCoach.ts
+apps/mobile/src/backupStore.ts
+apps/mobile/src/components/ChatTab.tsx
+apps/mobile/src/components/DialectCompareTab.tsx
+apps/mobile/src/components/MatrixTab.tsx
+apps/mobile/src/components/OcrTab.tsx
+apps/mobile/src/components/PhraseMediaAttachment.tsx
+apps/mobile/src/components/PlannerTab.tsx
+apps/mobile/src/components/PodcastTab.tsx
+apps/mobile/src/components/QuizTab.tsx
+apps/mobile/src/components/SafetyTab.tsx
+apps/mobile/src/components/ScenarioTab.tsx
+apps/mobile/src/components/TabErrorBoundary.tsx
+apps/mobile/src/components/WelcomeScreen.tsx
+apps/mobile/src/components/translator/AIGeneratorPanel.tsx
+apps/mobile/src/components/translator/AITranslatePanel.tsx
+apps/mobile/src/components/translator/DailyPhrasesPanel.tsx
+apps/mobile/src/components/translator/DictionaryPanel.tsx
+apps/mobile/src/components/translator/GenderBadge.tsx
+apps/mobile/src/components/translator/PhraseCard.tsx
+apps/mobile/src/components/translator/TranslatorTab.tsx
+apps/mobile/src/dailyPhrases.ts
+apps/mobile/src/data.ts
+apps/mobile/src/index.css
+apps/mobile/src/languageMemoryStore.ts
+apps/mobile/src/levelStore.ts
+apps/mobile/src/lib/aiProviders.ts
+apps/mobile/src/lib/config.ts
+apps/mobile/src/lib/conversationContext.ts
+apps/mobile/src/lib/localAIChat.ts
+apps/mobile/src/lib/mistakePractice.ts
+apps/mobile/src/lib/modelManager.ts
+apps/mobile/src/lib/net.ts
+apps/mobile/src/lib/speech.ts
+apps/mobile/src/mediaStore.ts
+apps/mobile/src/offlineAsr.ts
+apps/mobile/src/progressStore.ts
+apps/mobile/src/speechUtils.ts
+apps/mobile/src/srsStore.ts
+apps/mobile/src/types.ts
+apps/mobile/src/vite-env.d.ts
+apps/mobile/tests/server.routes.test.ts
+apps/mobile/tests/speechUtils.test.ts
+apps/mobile/tests/srsStore.test.ts
+apps/mobile/vitest.config.ts
+archive/legacy-ai/ARCHIVED.md
+archive/legacy-ai/package.json
+archive/legacy-ai/src/AIManager.ts
+archive/legacy-ai/src/AIProvider.ts
+archive/legacy-ai/src/ModelManager.ts
+archive/legacy-ai/src/NativePlugin.ts
+archive/legacy-ai/src/index.ts
+archive/legacy-ai/src/prompts/PromptBuilder.ts
+archive/legacy-ai/src/prompts/SystemPrompt.ts
+archive/legacy-ai/src/providers/LocalLLMProvider.ts
+archive/legacy-ai/src/types.ts
+gateway/.env.example
+gateway/README.md
+gateway/gateway.py
+gateway/test_gateway.py
+package-lock.json
+scripts/install-llama.sh
+server.ts
+third-party/llama.cpp/INSTALL_REQUIRED.md
+
+===== COMMON FILES =====
+.env.example
+.github/workflows/build-apk.yml
+.gitignore
+apps/mobile/index.html
+apps/mobile/package.json
+apps/mobile/src/main.tsx
+apps/mobile/src/services/database.sets.ts
+apps/mobile/src/services/database.ts
+apps/mobile/src/services/localAI.ts
+apps/mobile/src/services/localAIService.ts
+apps/mobile/tsconfig.json
+apps/mobile/vite.config.ts
+capacitor.config.ts
+package.json
+packages/core/package.json
+packages/core/src/index.ts
+packages/database/package.json
+packages/database/src/DatabaseManager.ts
+packages/database/src/index.ts
+packages/database/src/migrations/Migration.ts
+packages/database/src/migrations/MigrationRunner.ts
+packages/database/src/migrations/v001_initial.ts
+packages/database/src/repositories/BaseRepository.ts
+packages/database/src/repositories/ConversationRepository.ts
+packages/database/src/repositories/MessageRepository.ts
+packages/database/src/repositories/UserMemoryRepository.ts
+packages/database/src/repositories/VocabularyRepository.ts
+packages/database/src/types.ts
+packages/database/tsconfig.json
+packages/shared/package.json
+packages/shared/src/index.ts
+tsconfig.json
+
+===== NEW ROOT PACKAGE =====
+{
+  "name": "lingua-assistant",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "npm --workspace apps/mobile run dev",
+    "build": "npm --workspace apps/mobile run build",
+    "typecheck": "npm --workspace apps/mobile run typecheck && npm run typecheck:server",
+    "typecheck:server": "tsc --noEmit",
+    "server": "node --experimental-strip-types server.ts",
+    "gateway": "python3 gateway/gateway.py",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "test": "npm --workspace apps/mobile run test",
+    "test:ai-router": "node --experimental-strip-types --test aiRouter.test.ts",
+    "gateway:test": "python3 -m unittest discover -s gateway -p \"test_*.py\" -v"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "vite": "^7.0.0"
+  }
+}
+
+===== NEW SERVER =====
+/**
+ * TravelApp backend server.
+ *
+ * Implements the application's /api/* endpoints (translate, chat,
+ * scenario-report, generate-phrases, daily-phrases, planner, ocr, quiz).
+ *
+ * MIGRATION IN PROGRESS: this server can source AI completions from
+ * either backend, controlled by AI_BACKEND:
+ *
+ *   AI_BACKEND=gateway (default, unchanged from before) - calls the
+ *     Python Smart Router gateway (gateway/gateway.py) over HTTP.
+ *   AI_BACKEND=node - calls aiRouter.ts directly, in-process, with no
+ *     Python process involved. Same routing rules (capability-based,
+ *     failover, cooldown), reading the same env vars as
+ *     gateway/.env.example.
+ *
+ * The goal is to retire gateway/gateway.py once AI_BACKEND=node has
+ * been exercised enough to trust as the default - see README.md. Until
+ * then both exist side by side; gateway.py is unchanged.
+ *
+ * Either way, no specific model name is required; see
+ * MODEL_ARCHITECTURE.md.
+ *
+ * Run:  node --experimental-strip-types server.ts
+ * (or)  npm run server
+ */
+
+import { createServer, IncomingMessage, ServerResponse } from "node:http";
+import { routeChat, routeChatStream, describeProviders, type ChatMessage } from "./aiRouter.ts";
+
+const AI_BACKEND = (process.env.AI_BACKEND ?? "gateway").toLowerCase();
+const GATEWAY_URL =
+  process.env.GATEWAY_URL ?? "http://localhost:8080/v1/chat/completions";
+const HOST = process.env.SERVER_HOST ?? "0.0.0.0";
+const PORT = Number(process.env.SERVER_PORT ?? 3000);
+const DEFAULT_MAX_TOKENS = Number(process.env.SERVER_MAX_TOKENS ?? 1200);
+/*
+ * Bug fix: TRAVELAPP_SHARED_SECRET / VITE_TRAVELAPP_SHARED_SECRET existed as
+ * env vars and the frontend (see apps/mobile/src/lib/net.ts) already sent an
+ * `x-travelapp-secret` header whenever configured, but this server never
+ * actually read or checked that header - the "secret" did nothing. Also
+ * fixed: Access-Control-Allow-Headers below did not include
+ * x-travelapp-secret, so a browser would have blocked the header from ever
+ * reaching the server anyway, even after this check was added.
+ */
+const SHARED_SECRET = process.env.TRAVELAPP_SHARED_SECRET ?? "";
+const CORS_HEADERS = "Content-Type, x-travelapp-secret";
+
+export function jsonBody(req: IncomingMessage): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let raw = "";
+    req.on("data", (chunk: Buffer) => {
+      raw += chunk;
+      if (raw.length > 20 * 1024 * 1024) {
+        reject(new Error("Payload too large"));
+        req.destroy();
+      }
+    });
+    req.on("end", () => {
+      try {
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch (err) {
+        reject(new Error(`Invalid JSON: ${String(err)}`));
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+export function send(res: ServerResponse, status: number, payload: unknown): void {
+  const body = JSON.stringify(payload);
+  res.writeHead(status, {
+    "Content-Type": "application/json; charset=utf-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": CORS_HEADERS,
+  });
+  res.end(body);
+}
+
+/** Call the Python gateway (OpenAI-compatible chat completion). Only
+ * used when AI_BACKEND=gateway; see gatewayChat() below for the
+ * AI_BACKEND=node path. */
+async function callPythonGateway(
+  messages: ChatMessage[],
+  options: { temperature?: number; maxTokens?: number; task?: string } = {}
+): Promise<string> {
+  const controller = new AbortController();
+  const timer = setTimeout(
+    () => controller.abort(),
+    Number(process.env.GATEWAY_CALL_TIMEOUT ?? 120000)
+  );
+
+  try {
+    const res = await fetch(GATEWAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: "smart-router",
+        messages,
+        temperature: options.temperature ?? 0.7,
+        max_tokens: options.maxTokens ?? DEFAULT_MAX_TOKENS,
+        // Extra, non-standard field alongside the OpenAI-compatible ones
+        // above - ignored by any strict OpenAI client, but read by
+        // gateway.py's route() for the same task-aware model scoring
+        // aiRouter.ts does in AI_BACKEND=node (see gateway/gateway.py).
+        task: options.task ?? "chat",
+      }),
+    });
+
+    const data: any = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error ?? `Gateway returned ${res.status}`);
+    }
+    const content: string =
+      data?.choices?.[0]?.message?.content ?? "";
+    return content.trim();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Single entry point every handler below calls for a completion.
+ * Dispatches to whichever backend AI_BACKEND selects; callers don't
+ * need to know or care which one actually answered.
+ */
+export async function gatewayChat(
+  messages: ChatMessage[],
+  options: { temperature?: number; maxTokens?: number; task?: string } = {}
+): Promise<string> {
+  if (AI_BACKEND === "node") {
+    const routeOptions: { temperature?: number; max_tokens?: number; task?: string } = {
+      max_tokens: options.maxTokens ?? DEFAULT_MAX_TOKENS,
+      task: options.task ?? "chat",
+    };
+    if (options.temperature !== undefined) routeOptions.temperature = options.temperature;
+    const result = await routeChat(messages, routeOptions);
+    return result.text;
+  }
+  return callPythonGateway(messages, options);
+}
+
+// ---------------------------------------------------------------------------
+// Prompt builders per endpoint
+// ---------------------------------------------------------------------------
+
+/** Shared by handleChat() and the /api/chat/stream route below, so the
+ * streaming and non-streaming paths can never drift into building
+ * different prompts for what should be the same conversation turn. */
+function buildChatPrompt(body: any): { prompt: string; task: "chat" | "speaking" } {
+  const { message, dialect, personaName, personaTrait, personaOccupation, scenario, history, task, knownMistakes, levelHint, conversationSummary } = body;
+  const transcript = (history ?? [])
+    .map((h: any) => `${h.sender === "user" ? "Learner" : personaName ?? "Companion"}: ${h.text}`)
+    .join("\n");
+
+  const prompt = [
+    `You are ${personaName ?? "a travel companion"}, a language conversation partner for a learner of ${dialect ?? "the target dialect"}.`,
+    personaTrait ? `Persona trait: ${personaTrait}.` : "",
+    personaOccupation ? `Your occupation: ${personaOccupation}.` : "",
+    scenario
+      ? `Scenario: ${scenario.titleFa ?? ""} — ${scenario.location ?? ""}. Goal: ${scenario.objectiveFa ?? ""}.`
+      : "",
+    // Adaptive Difficulty: levelHint is computed client-side from the
+    // learner's real logged practice scores (see progressStore.ts /
+    // levelStore.ts), not chosen arbitrarily here.
+    levelHint ? `The learner's current level is ${levelHint}; keep your vocabulary and grammar at that level.` : "",
+    // Language Memory: knownMistakes are the learner's own recurring
+    // corrections (see languageMemoryStore.ts), so the model can watch
+    // for them instead of the learner having to repeat the correction.
+    Array.isArray(knownMistakes) && knownMistakes.length > 0
+      ? `The learner has recurring mistakes to watch for and gently correct if they reappear: ${knownMistakes.join(" | ")}`
+      : "",
+    // Context Manager: conversationSummary covers turns older than what's
+    // in `history` below (see conversationContext.ts client-side), so
+    // long sessions don't just lose earlier context once it's trimmed.
+    conversationSummary ? `Earlier in this conversation (summary): ${conversationSummary}` : "",
+    task === "speaking"
+      ? "This is a spoken conversation practice turn: keep your reply short (1-2 sentences) and conversational, like real speech, not a written paragraph."
+      : "",
+    "Reply naturally in the target dialect/language as the character.",
+    "After your natural reply, on separate lines provide:",
+    "فارسی: a concise Persian meaning of your reply.",
+    "اصلاح: only if the learner made a meaningful language mistake; otherwise write اصلاح: بدون اصلاح.",
+    "If the scenario objective was fully achieved, append the marker [OBJECTIVE_COMPLETE] at the very end.",
+    transcript ? `Conversation so far:\n${transcript}` : "",
+    `Learner: ${message}`,
+    `${personaName ?? "Companion"}:`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { prompt, task: task === "speaking" ? "speaking" : "chat" };
+}
+
+export async function handleChat(body: any): Promise<unknown> {
+  const { prompt, task } = buildChatPrompt(body);
+  const text = await gatewayChat([{ role: "user", content: prompt }], { task });
+  return { response: text };
+}
+
+export async function handleScenarioReport(body: any): Promise<unknown> {
+  const { transcript, scenarioTitle, objectiveFa, dialect } = body;
+  const transcriptText = (transcript ?? [])
+    .map((t: any) => `${t.sender === "user" ? "Learner" : "Companion"}: ${t.text}`)
+    .join("\n");
+
+  const prompt = [
+    `Analyze this ${dialect ?? "Arabic"} learning conversation. Scenario: ${scenarioTitle ?? ""}.`,
+    `Objective: ${objectiveFa ?? ""}.`,
+    `Transcript:\n${transcriptText}`,
+    "Return STRICT JSON with exactly this shape:",
+    `{"objectiveAchieved": boolean, "summaryFa": "string", "strengthsFa": ["string"], "improvementsFa": ["string"], "newVocabulary": [{"phrase": "string", "meaningFa": "string"}]}`,
+    "All prose in Persian. newVocabulary: at most 5 items.",
+  ].join("\n");
+
+  const raw = await gatewayChat([{ role: "user", content: prompt }], { temperature: 0.2 });
+  return extractJson(raw, {
+    objectiveAchieved: false,
+    summaryFa: "",
+    strengthsFa: [],
+    improvementsFa: [],
+    newVocabulary: [],
+  });
+}
+
+export async function handleTranslate(body: any): Promise<unknown> {
+  const { text, targetDialect, sourceLang } = body;
+  const prompt = [
+    `You are a ${sourceLang ?? "Persian/English"} -> ${targetDialect ?? "Arabic"} dialect translator for travelers.`,
+    `Translate this to ${targetDialect ?? "the target dialect"}: "${text}"`,
+    "Return STRICT JSON with exactly this shape:",
+    `{"translation": "string", "pronunciation": "string", "audioPronunciationTips": "string", "literalMeaning": "string", "culturalNote": "string"}`,
+    "All explanations in Persian.",
+  ].join("\n");
+
+  const raw = await gatewayChat([{ role: "user", content: prompt }], { temperature: 0.3 });
+  return extractJson(raw, {
+    translation: "",
+    pronunciation: "",
+    audioPronunciationTips: "",
+    literalMeaning: "",
+    culturalNote: "",
+  });
+}
+
+export async function handleGeneratePhrases(body: any): Promise<unknown> {
+  const { scenario, dialect, speakerGender, listenerGender } = body;
+  const prompt = [
+    `Generate 5 golden travel phrases in ${dialect ?? "Arabic"} for this scenario: "${scenario}".`,
+    `Speaker gender: ${speakerGender ?? "unisex"}. Listener gender: ${listenerGender ?? "unisex"}.`,
+    "Return STRICT JSON with exactly this shape:",
+    `{"phrases": [{"arabic": "string", "arabicPhonetic": "string", "arabicPhoneticLatin": "string", "farsi": "string", "english": "string", "audioTips": "string"}]}`,
+    "audioTips is a Persian pronunciation/usage tip.",
+  ].join("\n");
+
+  const raw = await gatewayChat([{ role: "user", content: prompt }], { temperature: 0.5 });
+  const parsed = extractJson(raw, { phrases: [] });
+  return parsed;
+
+===== NEW AI ROUTER =====
+/**
+ * Node-native mirror of gateway/gateway.py's capability-based router.
+ *
+ * MIGRATION STATUS (step 1 of a gradual server.ts <- gateway.py merge):
+ * this module reimplements the same interface gateway.py exposes over
+ * HTTP (discover Ollama models, route by capability, fail over to
+ * optional cloud providers, per-provider cooldown) as a plain
+ * in-process TypeScript function, callable directly from server.ts.
+ *
+ * It reads the exact same environment variables as gateway/.env.example
+ * (OLLAMA_BASE_URL, OLLAMA_MODEL_PREFERENCE, DEEPSEEK_*, MINIMAX_*,
+ * GLM_*, KIMI_*, PROVIDERS_JSON, PROVIDER_COOLDOWN) so a single .env
+ * can configure either backend without translation.
+ *
+ * server.ts picks between this module and the Python gateway via
+ * AI_BACKEND=node|gateway (see server.ts). Nothing here deletes or
+ * changes gateway/gateway.py - both implementations exist side by side
+ * until AI_BACKEND=node has been exercised enough to trust as the
+ * default, at which point gateway.py can be retired.
+ */
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content:
+    | string
+    | Array<
+        | { type: "text"; text: string }
+        | { type: "image_url"; image_url: { url: string } }
+      >;
+}
+
+export interface RouteOptions {
+  temperature?: number;
+  top_p?: number;
+  max_tokens?: number;
+  /** "speaking" = live spoken-conversation turn, where latency matters
+   * more than picking the exact preferred model name; anything else
+   * (including omitted) keeps the previous quality-first ranking. */
+  task?: string;
+}
+
+export interface RouteResult {
+  text: string;
+  provider: string;
+  model: string;
+  latencyMs: number;
+  capabilities: string[];
+}
+
+interface Provider {
+  name: string;
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+  kind: "ollama" | "openai";
+  priority: number;
+  capabilities: Set<string>;
+  metadata: Record<string, unknown>;
+  failedUntil: number;
+}
+
+const OLLAMA_BASE = (process.env.OLLAMA_BASE_URL ?? "http://localhost:11434").replace(/\/$/, "");
+function getPreferred(): string[] {
+  return (process.env.OLLAMA_MODEL_PREFERENCE ?? "qwen3:4b,qwen3-4b")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+const ROUTER_TIMEOUT_MS = Number(process.env.GATEWAY_TIMEOUT ?? 45) * 1000;
+const COOLDOWN_MS = Number(process.env.PROVIDER_COOLDOWN ?? 20) * 1000;
+const DISCOVERY_CACHE_MS = 10_000;
+
+function configured(p: Provider): boolean {
+  return p.kind === "ollama" || Boolean(p.apiKey);
+}
+function available(p: Provider): boolean {
+  return configured(p) && Date.now() >= p.failedUntil;
+}
+
+async function fetchJson(
+  method: string,
+  url: string,
+  payload?: unknown,
+  headers?: Record<string, string>,
+  timeoutMs: number = ROUTER_TIMEOUT_MS,
+): Promise<any> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const init: RequestInit = {
+      method,
+      headers: {
+        Accept: "application/json",
+        ...(payload !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(headers ?? {}),
+      },
+      signal: controller.signal,
+    };
+    if (payload !== undefined) init.body = JSON.stringify(payload);
+    const res = await fetch(url, init);
+    const raw = await res.text();
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${raw.slice(0, 200)}`);
+    return raw ? JSON.parse(raw) : {};
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+let ollamaCache: { at: number; providers: Provider[] } = { at: 0, providers: [] };
+
+/** Test-only: forces the next discoverOllamaModels() call to re-fetch
+ * instead of serving the 10s cache. Not used by the running app. */
+export function _resetDiscoveryCacheForTests(): void {
+  ollamaCache = { at: 0, providers: [] };
+}
+
+/** Mirrors gateway.py's ollama_models(): discover installed models and
+ * best-effort inspect each for vision/embedding capability via /api/show. */
+async function discoverOllamaModels(): Promise<Provider[]> {
+  const now = Date.now();
+  if (now - ollamaCache.at < DISCOVERY_CACHE_MS) return ollamaCache.providers;
+
+  const found: Provider[] = [];
+  try {
+    const tags = await fetchJson("GET", `${OLLAMA_BASE}/api/tags`, undefined, undefined, Math.min(ROUTER_TIMEOUT_MS, 8000));
+    for (const item of tags.models ?? []) {
+      const name: string | undefined = item.name ?? item.model;
+      if (!name) continue;
+      const caps = new Set<string>(["chat"]);
+      const meta: Record<string, unknown> = { size: item.size, digest: item.digest };
+      try {
+        const show = await fetchJson("POST", `${OLLAMA_BASE}/api/show`, { name }, undefined, 5000);
+        const details = show.details ?? {};
+        const families = String(details.families ?? "");
+        const capsStr = String(show.capabilities ?? "").toLowerCase();
+        if (families.toLowerCase().includes("clip") || capsStr.includes("vision")) caps.add("vision");
+        if (capsStr.includes("embedding")) caps.add("embedding");
+        meta.parameter_size = details.parameter_size;
+        meta.quantization = details.quantization_level;
+        meta.families = families;
+      } catch {
+        // best-effort; older Ollama versions may omit /api/show fields
+      }
+      found.push({
+        name: `ollama:${name}`,
+        baseUrl: `${OLLAMA_BASE}/v1`,
+        model: name,
+        apiKey: "",
+        kind: "ollama",
+        priority: 10,
+        capabilities: caps,
+        metadata: meta,
+        failedUntil: 0,
+      });
+    }
+  } catch (e) {
+    console.error(`[ai-router] Ollama discovery failed: ${(e as Error).message}`);
+  }
+
+  const rank = new Map<string, number>(getPreferred().map((n, i): [string, number] => [n, i]));
+  found.sort((a, b) => {
+    const ra = rank.get(a.model) ?? 999;
+    const rb = rank.get(b.model) ?? 999;
+    if (ra !== rb) return ra - rb;
+    const sa = Number(a.metadata.size ?? Number.MAX_SAFE_INTEGER);
+    const sb = Number(b.metadata.size ?? Number.MAX_SAFE_INTEGER);
+    if (sa !== sb) return sa - sb;
+    return a.model.localeCompare(b.model);
+  });
+
+  ollamaCache = { at: now, providers: found };
+  return found;
+}
+
+function envProvider(
+  name: string,
+  baseEnv: string,
+  defaultBase: string,
+  modelEnv: string,
+  defaultModel: string,
+  keyEnv: string,
+  priority: number,
+): Provider {
+  return {
+    name,
+    baseUrl: (process.env[baseEnv] ?? defaultBase).replace(/\/$/, ""),
+    model: process.env[modelEnv] ?? defaultModel,
+    apiKey: process.env[keyEnv] ?? "",
+    kind: "openai",
+    priority,
+    capabilities: new Set(["chat"]),
+    metadata: {},
+    failedUntil: 0,
+  };
+}
+
+/** Mirrors gateway.py's build_chain(), plus task-aware re-ranking of the
+ * local candidates: for a "speaking" turn (live spoken conversation),
+ * latency matters more than matching OLLAMA_MODEL_PREFERENCE exactly, so
+ * the smallest installed model goes first instead. Any other task keeps
+ * discoverOllamaModels()'s default (preference-name, then size) order. */
+async function buildChain(task: string = "chat"): Promise<Provider[]> {
+  let local = await discoverOllamaModels();
+  if (local.length === 0) {
+    // Ollama discovery temporarily unavailable: keep an explicit
+    // configured model as a probe, same as gateway.py does.
+    const fallbackModel = process.env.OLLAMA_MODEL || getPreferred()[0] || "qwen3:4b";
+    local = [
+      {
+        name: `ollama:${fallbackModel}`,
+        baseUrl: `${OLLAMA_BASE}/v1`,
+        model: fallbackModel,
+        apiKey: "",
+        kind: "ollama",
+        priority: 10,
+        capabilities: new Set(["chat"]),
+        metadata: {},
+        failedUntil: 0,
+      },
+    ];
+  } else if (task === "speaking") {
+    local = [...local].sort((a, b) => {
+      const sa = Number(a.metadata.size ?? Number.MAX_SAFE_INTEGER);
+      const sb = Number(b.metadata.size ?? Number.MAX_SAFE_INTEGER);
+      if (sa !== sb) return sa - sb;
+      return a.model.localeCompare(b.model);
+    });
+  }
+
+  const chain: Provider[] = [
+    ...local,
+    envProvider("deepseek", "DEEPSEEK_BASE_URL", "https://api.deepseek.com", "DEEPSEEK_MODEL", "deepseek-chat", "DEEPSEEK_API_KEY", 30),
+    envProvider("minimax", "MINIMAX_BASE_URL", "https://api.minimaxi.com", "MINIMAX_MODEL", "MiniMax-M2.7", "MINIMAX_API_KEY", 40),
+    envProvider("glm", "GLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4", "GLM_MODEL", "glm-4-flash", "GLM_API_KEY", 50),
+    envProvider("kimi", "KIMI_BASE_URL", "https://api.moonshot.cn/v1", "KIMI_MODEL", "moonshot-v1-8k", "KIMI_API_KEY", 60),
+  ];
+
+  try {
+    const extra = JSON.parse(process.env.PROVIDERS_JSON ?? "[]");
+    if (Array.isArray(extra)) {
+      extra.forEach((x: any, i: number) => {
+        if (!x || typeof x !== "object" || !x.base_url || !x.model) return;
+        chain.push({
+          name: String(x.name ?? `custom-${i + 1}`),
+          baseUrl: String(x.base_url).replace(/\/$/, ""),
+          model: String(x.model),
+          apiKey: String(x.api_key ?? ""),
+          kind: "openai",
+          priority: 100 + i,
+          capabilities: new Set(x.capabilities ?? ["chat"]),
+          metadata: {},
+          failedUntil: 0,
+        });
+      });
+    }
+  } catch {
+    // malformed PROVIDERS_JSON is ignored, same as gateway.py
+  }
+
+  return chain.sort((a, b) => a.priority - b.priority);
+}
+
+function needsVision(messages: ChatMessage[]): boolean {
+  return messages.some(
+    (m) => Array.isArray(m.content) && m.content.some((part) => part.type === "image_url"),
+  );
+}
+
+function providerHeaders(p: Provider): Record<string, string> {
+  return p.kind === "ollama" ? { Authorization: "Bearer ollama" } : { Authorization: `Bearer ${p.apiKey}` };
+}
+
+async function tryProvider(p: Provider, messages: ChatMessage[], options: RouteOptions): Promise<any | null> {
+  const payload: Record<string, unknown> = {
+    model: p.model,
+    messages,
+    temperature: options.temperature ?? 0.7,
+    top_p: options.top_p ?? 0.9,
+  };
+  if (options.max_tokens) payload.max_tokens = options.max_tokens;
+
+===== AI ROUTER TESTS =====
+/**
+ * Run with: node --experimental-strip-types --test aiRouter.test.ts
+ *
+ * Uses node:test (built-in, no npm install required) and mocks the
+ * global fetch used by aiRouter.ts, so this exercises the same
+ * behaviors gateway/test_gateway.py checks in the Python router:
+ * fallback ordering through failing providers, and skipping
+ * non-vision providers for image requests.
+ */
+import test from "node:test";
+import assert from "node:assert/strict";
+
+process.env.OLLAMA_BASE_URL = "http://fake-ollama:11434";
+process.env.DEEPSEEK_API_KEY = "test-key";
+process.env.DEEPSEEK_MODEL = "deepseek-chat";
+process.env.PROVIDER_COOLDOWN = "20";
+
+const { routeChat, routeChatStream, _resetDiscoveryCacheForTests } = await import("./aiRouter.ts");
+
+function mockFetch(handlers: Record<string, (init?: RequestInit) => any>) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: any, init?: RequestInit) => {
+    const url = String(input);
+    for (const [key, handler] of Object.entries(handlers)) {
+      if (url.includes(key)) {
+        const body = handler(init);
+        return new Response(JSON.stringify(body), { status: 200 });
+      }
+    }
+    return new Response(JSON.stringify({ error: "unhandled url in test: " + url }), { status: 404 });
+  }) as typeof fetch;
+  return () => {
+    globalThis.fetch = originalFetch;
+  };
+}
+
+test("falls back to the next provider when the first (local model) fails", async () => {
+  _resetDiscoveryCacheForTests();
+  const restore = mockFetch({
+    "/api/tags": () => ({ models: [{ name: "some-local-model", size: 100 }] }),
+    "/api/show": () => ({ details: {} }),
+    "fake-ollama:11434/v1/chat/completions": () => {
+      throw new Error("simulated local failure");
+    },
+    "api.deepseek.com/chat/completions": () => ({ choices: [{ message: { content: "ok from deepseek" } }] }),
+  });
+  try {
+    const result = await routeChat([{ role: "user", content: "hi" }]);
+    assert.equal(result.provider, "deepseek");
+    assert.equal(result.text, "ok from deepseek");
+  } finally {
+    restore();
+  }
+});
+
+test("skips a text-only local model for an image request and uses the vision-capable fallback", async () => {
+  _resetDiscoveryCacheForTests();
+  // Only PROVIDERS_JSON entries can declare vision (same as gateway.py's
+  // env_provider(): the built-in cloud fallbacks are always chat-only by
+  // default), so use a custom vision-capable provider for this check.
+  const previousProvidersJson = process.env.PROVIDERS_JSON;
+  process.env.PROVIDERS_JSON = JSON.stringify([
+    { name: "custom-vision", base_url: "https://vision.example.com/v1", model: "vision-model", api_key: "k", capabilities: ["chat", "vision"] },
+  ]);
+  const restore = mockFetch({
+    "/api/tags": () => ({ models: [{ name: "text-only-model", size: 100 }] }),
+    "/api/show": () => ({ details: {} }), // no vision capability reported
+    "fake-ollama:11434/v1/chat/completions": () => {
+      throw new Error("should never be called for a vision request");
+    },
+    "vision.example.com/v1/chat/completions": () => ({ choices: [{ message: { content: "described the image" } }] }),
+  });
+  try {
+    const result = await routeChat([
+      { role: "user", content: [{ type: "image_url", image_url: { url: "data:image/png;base64,x" } }] },
+    ]);
+    assert.equal(result.provider, "custom-vision");
+  } finally {
+    restore();
+    process.env.PROVIDERS_JSON = previousProvidersJson;
+  }
+});
+
+test("throws with a clear message when every provider fails", async () => {
+  _resetDiscoveryCacheForTests();
+  const restore = mockFetch({
+    "/api/tags": () => ({ models: [] }),
+    "api.deepseek.com/chat/completions": () => {
+      throw new Error("simulated cloud failure");
+    },
+  });
+  try {
+    await assert.rejects(() => routeChat([{ role: "user", content: "hi" }]), /All suitable AI providers failed/);
+  } finally {
+    restore();
+  }
+});
+
+test("a 'speaking' task prefers the smallest installed local model for latency", async () => {
+  _resetDiscoveryCacheForTests();
+  const restore = mockFetch({
+    "/api/tags": () => ({
+      models: [
+        { name: "big-model", size: 8_000_000_000 },
+        { name: "small-model", size: 900_000_000 },
+      ],
+    }),
+    "/api/show": () => ({ details: {} }),
+    "fake-ollama:11434/v1/chat/completions": (init) => {
+      const body = JSON.parse(String((init as any).body));
+      return { choices: [{ message: { content: `answered by ${body.model}` } }] };
+    },
+  });
+  try {
+    const result = await routeChat([{ role: "user", content: "hi" }], { task: "speaking" });
+    assert.equal(result.model, "small-model");
+  } finally {
+    restore();
+  }
+});
+
+test("a normal 'chat' task keeps the default preference/size ordering (not forced to the smallest model)", async () => {
+  _resetDiscoveryCacheForTests();
+  const previousPref = process.env.OLLAMA_MODEL_PREFERENCE;
+  process.env.OLLAMA_MODEL_PREFERENCE = "big-model";
+  const restore = mockFetch({
+    "/api/tags": () => ({
+      models: [
+        { name: "big-model", size: 8_000_000_000 },
+        { name: "small-model", size: 900_000_000 },
+      ],
+    }),
+    "/api/show": () => ({ details: {} }),
+    "fake-ollama:11434/v1/chat/completions": (init) => {
+      const body = JSON.parse(String((init as any).body));
+      return { choices: [{ message: { content: `answered by ${body.model}` } }] };
+    },
+  });
+  try {
+    const result = await routeChat([{ role: "user", content: "hi" }], { task: "chat" });
+    assert.equal(result.model, "big-model");
+  } finally {
+    restore();
+    process.env.OLLAMA_MODEL_PREFERENCE = previousPref;
+  }
+});
+
+function mockFetchStream(handlers: Record<string, (init?: RequestInit) => string[] | null>) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: any, init?: RequestInit) => {
+    const url = String(input);
+    for (const [key, handler] of Object.entries(handlers)) {
+      if (url.includes(key)) {
+        const sseLines = handler(init);
+        if (sseLines === null) return new Response("not found", { status: 404 });
+        const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+          start(controller) {
+            for (const line of sseLines) controller.enqueue(encoder.encode(line + "\n"));
+            controller.close();
+          },
+        });
+        return new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream" } });
+      }
+    }
+    return new Response(JSON.stringify({ error: "unhandled url in test: " + url }), { status: 404 });
+  }) as typeof fetch;
+  return () => {
+    globalThis.fetch = originalFetch;
+  };
+}
+
+test("routeChatStream yields deltas as they arrive and a final done chunk", async () => {
+  _resetDiscoveryCacheForTests();
+  const restore = mockFetchStream({
+    "/api/tags": () => null,
+    "fake-ollama:11434/v1/chat/completions": () => [
+      `data: ${JSON.stringify({ choices: [{ delta: { content: "Hel" } }] })}`,
+      `data: ${JSON.stringify({ choices: [{ delta: { content: "lo!" } }] })}`,
+      "data: [DONE]",
+    ],
+  });
+  try {
+    const chunks: { delta: string; done: boolean; provider?: string }[] = [];
+    for await (const chunk of routeChatStream([{ role: "user", content: "hi" }])) chunks.push(chunk);
+    const fullText = chunks.map((c) => c.delta).join("");
+    assert.equal(fullText, "Hello!");
+    assert.equal(chunks[chunks.length - 1].done, true);
+  } finally {
+    restore();
+  }
+});
+
+test("routeChatStream falls back to the next provider if the first stream never yields any text", async () => {
+  _resetDiscoveryCacheForTests();
+  process.env.DEEPSEEK_API_KEY = "test-key";
+  const restore = mockFetchStream({
+    "/api/tags": () => null,
+    "fake-ollama:11434/v1/chat/completions": () => [], // connects, but never sends any data: line
+    "api.deepseek.com/chat/completions": () => [
+      `data: ${JSON.stringify({ choices: [{ delta: { content: "from deepseek" } }] })}`,
+      "data: [DONE]",
+    ],
+  });
+  try {
+    const chunks: { delta: string; done: boolean; provider?: string }[] = [];
+    for await (const chunk of routeChatStream([{ role: "user", content: "hi" }])) chunks.push(chunk);
+    assert.equal(chunks.map((c) => c.delta).join(""), "from deepseek");
+    assert.equal(chunks[0].provider, "deepseek");
+  } finally {
+    restore();
+  }
+});
+
+===== NEW GATEWAY =====
+#!/usr/bin/env python3
+"""Model-agnostic local-first AI gateway for Lingua Assistant.
+
+Routing is capability based, not model-name based. Local Ollama models are
+ discovered automatically; any OpenAI-compatible provider can be added via
+ PROVIDERS_JSON. Cloud providers are optional fallbacks.
+"""
+from __future__ import annotations
+import json, os, sys, time, threading, urllib.error, urllib.request
+from dataclasses import dataclass, field
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import Any, Dict, List, Optional
+
+HOST=os.getenv("GATEWAY_HOST","0.0.0.0"); PORT=int(os.getenv("GATEWAY_PORT","8080"))
+TIMEOUT=float(os.getenv("GATEWAY_TIMEOUT","45")); COOLDOWN=float(os.getenv("PROVIDER_COOLDOWN","20"))
+LOCAL=os.getenv("OLLAMA_BASE_URL","http://localhost:11434").rstrip("/")
+PREFERRED=[x.strip() for x in os.getenv("OLLAMA_MODEL_PREFERENCE","qwen3:4b,qwen3-4b").split(",") if x.strip()]
+
+@dataclass
+class Provider:
+    name:str; base_url:str; model:str; api_key:str=""; kind:str="openai"; priority:int=100
+    capabilities:set[str]=field(default_factory=lambda:{"chat"}); metadata:dict[str,Any]=field(default_factory=dict)
+    failed_until:float=0.0
+    def configured(self): return self.kind=="ollama" or bool(self.api_key)
+    def available(self): return self.configured() and time.time() >= self.failed_until
+    def describe(self):
+        return {"name":self.name,"model":self.model,"kind":self.kind,"configured":self.configured(),
+                "available":self.available(),"capabilities":sorted(self.capabilities),"latency_hint_ms":self.metadata.get("latency_hint_ms")}
+
+_cache_lock=threading.Lock(); _ollama_cache:tuple[float,list[Provider]]=(0,[])
+
+def http_json(method,url,payload=None,headers=None,timeout=TIMEOUT):
+    data=json.dumps(payload).encode() if payload is not None else None
+    h={"Accept":"application/json"}; h.update(headers or {})
+    if payload is not None: h["Content-Type"]="application/json"
+    req=urllib.request.Request(url,data=data,headers=h,method=method)
+    with urllib.request.urlopen(req,timeout=timeout) as r:
+        raw=r.read().decode(); return json.loads(raw) if raw else {}
+
+def http_stream_lines(method,url,payload=None,headers=None,timeout=TIMEOUT):
+    """Like http_json but for an SSE upstream: yields decoded, stripped
+    lines as they arrive instead of reading the whole body at once."""
+    data=json.dumps(payload).encode() if payload is not None else None
+    h={"Accept":"text/event-stream"}; h.update(headers or {})
+    if payload is not None: h["Content-Type"]="application/json"
+    req=urllib.request.Request(url,data=data,headers=h,method=method)
+    with urllib.request.urlopen(req,timeout=timeout) as r:
+        for raw_line in r:
+            line=raw_line.decode("utf-8",errors="ignore").strip()
+            if line: yield line
+
+def ollama_models()->list[Provider]:
+    global _ollama_cache
+    now=time.time()
+    with _cache_lock:
+        if now-_ollama_cache[0] < 10: return _ollama_cache[1]
+    found=[]
+    try:
+        tags=http_json("GET",f"{LOCAL}/api/tags",timeout=min(TIMEOUT,8))
+        for item in tags.get("models",[]):
+            name=item.get("name") or item.get("model")
+            if not name: continue
+            caps={"chat"}; meta={"size":item.get("size"),"digest":item.get("digest")}
+            # /api/show is best-effort; older Ollama versions may omit fields.
+            try:
+                show=http_json("POST",f"{LOCAL}/api/show",{"name":name},timeout=5)
+                details=(show.get("details") or {}); families=str(details.get("families") or "")
+                if "clip" in families.lower() or "vision" in str(show.get("capabilities","")).lower(): caps.add("vision")
+                if "embedding" in str(show.get("capabilities","")).lower(): caps.add("embedding")
+                meta.update({"parameter_size":details.get("parameter_size"),"quantization":details.get("quantization_level"),"families":families})
+            except Exception: pass
+            found.append(Provider("ollama:"+name,f"{LOCAL}/v1",name,"ollama","ollama",10,caps,meta))
+    except Exception as e: print(f"[gateway] Ollama discovery failed: {e}",file=sys.stderr)
+    # Stable preference: configured preference first, then smaller local models.
+    rank={n:i for i,n in enumerate(PREFERRED)}
+    found.sort(key=lambda p:(rank.get(p.model,999), p.metadata.get("size") or 10**30, p.model.lower()))
+    with _cache_lock: _ollama_cache=(now,found)
+    return found
+
+def env_provider(name,base,model,key,priority,capabilities=("chat",),kind="openai"):
+    return Provider(name,os.getenv(base,base).rstrip("/"),os.getenv(model,model),os.getenv(key,""),kind,priority,set(capabilities),{})
+
+def build_chain(task="chat")->list[Provider]:
+    local=ollama_models()
+    # If Ollama discovery is temporarily unavailable, keep an explicit configured model as a probe.
+    if not local:
+        fallback_model=os.getenv("OLLAMA_MODEL",PREFERRED[0] if PREFERRED else "qwen3:4b")
+        local=[Provider("ollama:"+fallback_model,f"{LOCAL}/v1",fallback_model,"ollama","ollama",10,{"chat"},{})]
+    elif task=="speaking":
+        # Live spoken-conversation turn: latency matters more than matching
+        # OLLAMA_MODEL_PREFERENCE exactly, so prefer the smallest installed
+        # model instead of ollama_models()'s default preference-first order.
+        local=sorted(local,key=lambda p:(p.metadata.get("size") or 10**30, p.model.lower()))
+    chain=local
+    chain += [
+      env_provider("deepseek", "DEEPSEEK_BASE_URL","DEEPSEEK_MODEL","DEEPSEEK_API_KEY",30),
+      env_provider("minimax", "MINIMAX_BASE_URL","MINIMAX_MODEL","MINIMAX_API_KEY",40),
+      env_provider("glm", "GLM_BASE_URL","GLM_MODEL","GLM_API_KEY",50),
+      env_provider("kimi", "KIMI_BASE_URL","KIMI_MODEL","KIMI_API_KEY",60),
+    ]
+    # Fully generic OpenAI-compatible providers. Example JSON in .env.example.
+    try: extra=json.loads(os.getenv("PROVIDERS_JSON","[]"))
+    except json.JSONDecodeError: extra=[]
+    if isinstance(extra,list):
+        for i,x in enumerate(extra):
+            if not isinstance(x,dict) or not x.get("base_url") or not x.get("model"): continue
+            caps=set(x.get("capabilities") or ["chat"])
+            chain.append(Provider(str(x.get("name") or f"custom-{i+1}"),str(x["base_url"]).rstrip("/"),str(x["model"]),str(x.get("api_key") or ""),100+i,caps,{}))
+    return sorted(chain,key=lambda p:p.priority)
+
+def needs_vision(messages):
+    return any(isinstance(m.get("content"),list) and any(part.get("type")=="image_url" for part in m["content"] if isinstance(part,dict)) for m in messages)
+
+def headers(p): return {"Authorization":"Bearer ollama"} if p.kind=="ollama" else {"Authorization":f"Bearer {p.api_key}"}
+def endpoint(p): return f"{p.base_url}/chat/completions"
+
+def try_provider(p,messages,options):
+    payload={"model":p.model,"messages":messages,"temperature":options.get("temperature",.7),"top_p":options.get("top_p",.9)}
+    if options.get("max_tokens"): payload["max_tokens"]=options["max_tokens"]
+    try:
+        result=http_json("POST",endpoint(p),payload,headers(p))
+        if result.get("choices"): return result
+        raise RuntimeError("empty choices")
+    except Exception as e:
+        p.failed_until=time.time()+COOLDOWN
+        print(f"[gateway] {p.name} failed: {e}",file=sys.stderr); return None
+
+def route(messages,options):
+    vision=needs_vision(messages); errors=[]
+    for p in build_chain(options.get("task","chat")):
+        if not p.available(): errors.append(p.name+": unavailable"); continue
+        if vision and "vision" not in p.capabilities: errors.append(p.name+": no vision"); continue
+        started=time.time(); result=try_provider(p,messages,options)
+        if result is not None:
+            result["_gateway"]={"provider":p.name,"model":p.model,"latency_ms":int((time.time()-started)*1000),"capabilities":sorted(p.capabilities)}
+            return result
+        errors.append(p.name+": failed")
+    raise RuntimeError("All suitable AI providers failed: "+"; ".join(errors))
+
+def try_provider_stream(p,messages,options):
+    payload={"model":p.model,"messages":messages,"temperature":options.get("temperature",.7),"top_p":options.get("top_p",.9),"stream":True}
+    if options.get("max_tokens"): payload["max_tokens"]=options["max_tokens"]
+    for line in http_stream_lines("POST",endpoint(p),payload,headers(p)):
+        if not line.startswith("data:"): continue
+        data_str=line[5:].strip()
+        if data_str=="[DONE]" or not data_str: continue
+        try: chunk=json.loads(data_str)
+        except json.JSONDecodeError: continue
+        delta=(chunk.get("choices") or [{}])[0].get("delta",{}).get("content","")
+        if delta: yield delta
+
+def route_stream(messages,options):
+    """Streaming counterpart to route(): same provider selection/failover,
+    but yields {"delta","done","provider","model"} chunks as they arrive
+    instead of waiting for the full completion. Mirrors aiRouter.ts's
+    routeChatStream() - see that file for the design rationale (commits
+    to a provider once it has yielded real text; a mid-stream failure
+    after that point is surfaced rather than silently retried elsewhere)."""
+    vision=needs_vision(messages); errors=[]
+    for p in build_chain(options.get("task","chat")):
+        if not p.available(): errors.append(p.name+": unavailable"); continue
+        if vision and "vision" not in p.capabilities: errors.append(p.name+": no vision"); continue
+        got_any=False
+        try:
+            for delta in try_provider_stream(p,messages,options):
+                got_any=True
+                yield {"delta":delta,"done":False,"provider":p.name,"model":p.model}
+        except Exception as e:
+            if got_any:
+                raise RuntimeError(f"{p.name} stream interrupted: {e}")
+            p.failed_until=time.time()+COOLDOWN
+            errors.append(f"{p.name}: failed ({e})")
+            continue
+        if got_any:
+            yield {"delta":"","done":True,"provider":p.name,"model":p.model}
+            return
+        errors.append(p.name+": empty stream")
+    raise RuntimeError("All suitable AI providers failed: "+"; ".join(errors))
+
+def system_prompt(body,task):
+    dialect=body.get("dialect") or body.get("targetDialect") or "the selected dialect"; persona=body.get("personaName") or "a friendly local speaker"
+    return (f"You are {persona}, a {body.get('personaTrait') or 'natural and patient'} language coach. Target dialect/language: {dialect}. "
+            "The learner's goal is fluent natural spoken language. Prefer short realistic spoken turns, correct only meaningful mistakes, "
+            "teach colloquial vocabulary, and distinguish dialect-specific wording from formal language. Never invent what an image says.")
+
+def make_messages(body,task):
+    msgs=[{"role":"system","content":system_prompt(body,task)}]
+    for t in (body.get("history") or [])[-12:]: msgs.append({"role":"assistant" if t.get("sender") in ("assistant","companion") else "user","content":str(t.get("text", ""))})
+    text=str(body.get("message") or body.get("text") or body.get("prompt") or body.get("scenario") or "")
+    if task=="ocr" and body.get("image"):
+        msgs.append({"role":"user","content":[{"type":"text","text":"Read the attached image. If unreadable, say so. Return only factual observations."},{"type":"image_url","image_url":{"url":body["image"]}}]})
+    else: msgs.append({"role":"user","content":text})
+    return msgs
+
+def extract_json(raw,fallback):
+    s=(raw or "").replace("```json","").replace("```","").strip(); a=s.find("{"); b=s.rfind("}")
+    if a>=0 and b>a:
+        try: return json.loads(s[a:b+1])
+        except json.JSONDecodeError: pass
+    try: return json.loads(s)
+    except Exception: return fallback
+
+def task_response(body,task):
+    prompts={
+      "report":"Analyze the transcript. Return strict JSON: objectiveAchieved boolean, summaryFa string, strengthsFa string[], improvementsFa string[], newVocabulary array of {phrase,meaningFa}. All prose Persian.",
+      "translate":"Translate for natural spoken use. Return strict JSON: translation, alternatives, notes. Explanations Persian.",
+      "phrases":"Generate 5 useful spoken phrases. Return strict JSON: phrases array of {target,meaningFa,pronunciation,note}.",
+      "quiz":"Create exactly 5 multiple-choice questions. Return strict JSON: questions array of {question,options,answerIndex,explanation}. Explanations Persian.",
+      "planner":"Return strict JSON: packingItems, culturalTips, dailyRecommendations array with day,activity,localDialectChallenge. Persian.",
+      "ocr":"Return strict JSON: transcription,translation,pronunciation,travelContext. Do not guess unreadable text.",
+    }
+    mistakes=body.get("mistakes")
+    if task=="quiz" and isinstance(mistakes,list) and mistakes:
+        # Quiz-into-learning-loop: target the learner's own recurring
+        # mistakes (see languageMemoryStore.ts) instead of a generic
+        # category/level quiz, mirroring server.ts's handleQuiz().
+        prompts["quiz"]=("Create a short multiple-choice quiz that specifically targets these recurring "
+                          "mistakes a language learner keeps making: "+" | ".join(str(m) for m in mistakes)+
+                          ". Create exactly 3 questions, one per mistake, each testing whether the learner "
+                          "now gets it right. Return strict JSON: questions array of "
+                          "{question,options,answerIndex,explanation}. Explanations Persian.")
+    msgs=make_messages(body,task)
+    if task in prompts: msgs.insert(1,{"role":"system","content":prompts[task]})
+    r=route(msgs,{"temperature":body.get("temperature",.35),"max_tokens":body.get("max_tokens",1200),"top_p":.9,"task":task})
+    text=str(r.get("choices",[{}])[0].get("message",{}).get("content","")).strip()
+    if not text: raise RuntimeError("empty response")
+    out={"response":text,"text":text,"_gateway":r.get("_gateway")}
+    if task!="chat": out.update(extract_json(text,{}))
+    return out
+
+class Handler(BaseHTTPRequestHandler):
+    server_version="LinguaGateway/2.0"
+    def cors(self):
+        self.send_header("Access-Control-Allow-Origin","*"); self.send_header("Access-Control-Allow-Methods","GET,POST,OPTIONS"); self.send_header("Access-Control-Allow-Headers","Content-Type,Authorization")
+    def log_message(self,fmt,*args): print("[gateway] "+fmt%args,file=sys.stderr)
+    def sendj(self,status,obj):
+        b=json.dumps(obj,ensure_ascii=False).encode(); self.send_response(status); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(b))); self.cors(); self.end_headers(); self.wfile.write(b)
+    def read(self):
+        n=int(self.headers.get("Content-Length","0") or 0)
+        if n>20*1024*1024: raise ValueError("payload too large")
+        return json.loads(self.rfile.read(n).decode() or "{}")
+    def do_OPTIONS(self): self.send_response(204); self.cors(); self.end_headers()
+    def do_GET(self):
+        path=self.path.split("?")[0]
+        if path=="/health": self.sendj(200,{"status":"ok","service":"lingua-gateway","providers":[p.describe() for p in build_chain()]}); return
+        if path=="/v1/models": self.sendj(200,{"object":"list","data":[{"id":p.model,"owned_by":p.name,"capabilities":sorted(p.capabilities)} for p in build_chain() if p.configured()]}); return
+        self.sendj(404,{"error":"Not found"})
+    def do_POST(self):
+        path=self.path.split("?")[0]
+        try: body=self.read()
+        except Exception as e: self.sendj(400,{"error":str(e)}); return
+        if path=="/v1/chat/completions":
+            if body.get("stream"):
+                try:
+                    self.send_response(200)
+                    self.send_header("Content-Type","text/event-stream")
+                    self.send_header("Cache-Control","no-cache")
+                    self.cors(); self.end_headers()
+                    for chunk in route_stream(body.get("messages") or [],{"temperature":body.get("temperature",.7),"top_p":body.get("top_p",.9),"max_tokens":body.get("max_tokens"),"task":body.get("task","chat")}):
+                        self.wfile.write(("data: "+json.dumps(chunk,ensure_ascii=False)+"\n\n").encode())
+                        self.wfile.flush()
+                except Exception as e:
+                    # Headers are already sent by this point (streaming has
+                    # started), so a mid-stream failure can't become a clean
+                    # 503 anymore - send it as one more SSE event instead so
+                    # the client at least learns why the stream stopped.
+                    try:
+                        self.wfile.write(("data: "+json.dumps({"error":str(e)},ensure_ascii=False)+"\n\n").encode())
+                    except Exception: pass
+                return
+            try: self.sendj(200,route(body.get("messages") or [],{"temperature":body.get("temperature",.7),"top_p":body.get("top_p",.9),"max_tokens":body.get("max_tokens"),"task":body.get("task","chat")}))
+            except Exception as e: self.sendj(503,{"error":str(e)})
+            return
+        tasks={"/api/chat":"chat", "/chat":"chat", "/api/scenario-report":"report", "/api/translate":"translate", "/api/generate-phrases":"phrases", "/api/daily-phrases":"phrases", "/api/planner":"planner", "/api/ocr":"ocr", "/api/quiz":"quiz"}
+        if path in tasks:
+            # /api/chat additionally honors an explicit body.task of "chat" or
+            # "speaking" (server.ts always sends this) for the same latency
+            # vs. quality routing distinction build_chain() makes above, when
+            # the gateway's own standalone /api/chat is used directly instead
+            # of going through server.ts.
+            task=body.get("task") if path in ("/api/chat","/chat") and body.get("task") in ("chat","speaking") else tasks[path]
+            try: self.sendj(200,task_response(body,task))
+            except Exception as e: self.sendj(503,{"error":str(e)})
+            return
+        self.sendj(404,{"error":"Not found"})
+
+def main():
+    print(f"[gateway] Smart Router 2.0 listening on {HOST}:{PORT}")
+    print("[gateway] Local models are discovered from Ollama; routing is capability based.")
+    for p in build_chain(): print(f"[gateway] {p.name}: {p.model} {'READY' if p.configured() else 'not configured'} {sorted(p.capabilities)}")
+    ThreadingHTTPServer((HOST,PORT),Handler).serve_forever()
+if __name__=="__main__": main()
+
+===== CURRENT ROOT PACKAGE =====
+{
+  "name": "lingua-assistant",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "npm --workspace apps/mobile run dev",
+    "build": "npm --workspace apps/mobile run build",
+    "typecheck": "npm --workspace apps/mobile run typecheck",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^7.0.0"
+  }
+}
+
+===== CURRENT SERVER IF PRESENT =====
+
+===== CURRENT MOBILE PACKAGE =====
+{
+  "name": "@lingua/mobile",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@capacitor-community/sqlite": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@lingua/core": "0.1.0",
+    "@lingua/database": "0.1.0",
+    "@lingua/shared": "0.1.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^7.0.0"
+  }
+}
+
+===== CURRENT MOBILE TREE =====
+apps/mobile/index.html
+apps/mobile/package.json
+apps/mobile/src/main.tsx
+apps/mobile/src/services/database.sets.ts
+apps/mobile/src/services/database.ts
+apps/mobile/src/services/localAI.ts
+apps/mobile/src/services/localAIService.ts
+apps/mobile/src/styles.css
+apps/mobile/tsconfig.json
+apps/mobile/vite.config.ts
+
+===== NEW MOBILE TREE =====
+/tmp/langua-new/apps/mobile/index.html
+/tmp/langua-new/apps/mobile/package.json
+/tmp/langua-new/apps/mobile/src/App.tsx
+/tmp/langua-new/apps/mobile/src/accentCoach.ts
+/tmp/langua-new/apps/mobile/src/backupStore.ts
+/tmp/langua-new/apps/mobile/src/components/ChatTab.tsx
+/tmp/langua-new/apps/mobile/src/components/DialectCompareTab.tsx
+/tmp/langua-new/apps/mobile/src/components/MatrixTab.tsx
+/tmp/langua-new/apps/mobile/src/components/OcrTab.tsx
+/tmp/langua-new/apps/mobile/src/components/PhraseMediaAttachment.tsx
+/tmp/langua-new/apps/mobile/src/components/PlannerTab.tsx
+/tmp/langua-new/apps/mobile/src/components/PodcastTab.tsx
+/tmp/langua-new/apps/mobile/src/components/QuizTab.tsx
+/tmp/langua-new/apps/mobile/src/components/SafetyTab.tsx
+/tmp/langua-new/apps/mobile/src/components/ScenarioTab.tsx
+/tmp/langua-new/apps/mobile/src/components/TabErrorBoundary.tsx
+/tmp/langua-new/apps/mobile/src/components/WelcomeScreen.tsx
+/tmp/langua-new/apps/mobile/src/dailyPhrases.ts
+/tmp/langua-new/apps/mobile/src/data.ts
+/tmp/langua-new/apps/mobile/src/index.css
+/tmp/langua-new/apps/mobile/src/languageMemoryStore.ts
+/tmp/langua-new/apps/mobile/src/levelStore.ts
+/tmp/langua-new/apps/mobile/src/lib/aiProviders.ts
+/tmp/langua-new/apps/mobile/src/lib/config.ts
+/tmp/langua-new/apps/mobile/src/lib/conversationContext.ts
+/tmp/langua-new/apps/mobile/src/lib/localAIChat.ts
+/tmp/langua-new/apps/mobile/src/lib/mistakePractice.ts
+/tmp/langua-new/apps/mobile/src/lib/modelManager.ts
+/tmp/langua-new/apps/mobile/src/lib/net.ts
+/tmp/langua-new/apps/mobile/src/lib/speech.ts
+/tmp/langua-new/apps/mobile/src/main.tsx
+/tmp/langua-new/apps/mobile/src/mediaStore.ts
+/tmp/langua-new/apps/mobile/src/offlineAsr.ts
+/tmp/langua-new/apps/mobile/src/progressStore.ts
+/tmp/langua-new/apps/mobile/src/services/database.sets.ts
+/tmp/langua-new/apps/mobile/src/services/database.ts
+/tmp/langua-new/apps/mobile/src/services/localAI.ts
+/tmp/langua-new/apps/mobile/src/services/localAIService.ts
+/tmp/langua-new/apps/mobile/src/speechUtils.ts
+/tmp/langua-new/apps/mobile/src/srsStore.ts
+/tmp/langua-new/apps/mobile/src/types.ts
+/tmp/langua-new/apps/mobile/src/vite-env.d.ts
+/tmp/langua-new/apps/mobile/tests/server.routes.test.ts
+/tmp/langua-new/apps/mobile/tests/speechUtils.test.ts
+/tmp/langua-new/apps/mobile/tests/srsStore.test.ts
+/tmp/langua-new/apps/mobile/tsconfig.json
+/tmp/langua-new/apps/mobile/vite.config.ts
+/tmp/langua-new/apps/mobile/vitest.config.ts
+
+===== POTENTIAL DUPLICATE AI IMPLEMENTATIONS =====
+--- current packages/ai ---
+packages/ai/package.json
+packages/ai/src/AIManager.ts
+packages/ai/src/AIProvider.ts
+packages/ai/src/ModelManager.ts
+packages/ai/src/index.ts
+packages/ai/src/prompts/PromptBuilder.ts
+packages/ai/src/prompts/SystemPrompt.ts
+packages/ai/src/providers/LocalLLMProvider.ts
+packages/ai/src/types.ts
+--- new archive/legacy-ai ---
+/tmp/langua-new/archive/legacy-ai/ARCHIVED.md
+/tmp/langua-new/archive/legacy-ai/package.json
+/tmp/langua-new/archive/legacy-ai/src/AIManager.ts
+/tmp/langua-new/archive/legacy-ai/src/AIProvider.ts
+/tmp/langua-new/archive/legacy-ai/src/ModelManager.ts
+/tmp/langua-new/archive/legacy-ai/src/NativePlugin.ts
+/tmp/langua-new/archive/legacy-ai/src/index.ts
+/tmp/langua-new/archive/legacy-ai/src/prompts/PromptBuilder.ts
+/tmp/langua-new/archive/legacy-ai/src/prompts/SystemPrompt.ts
+/tmp/langua-new/archive/legacy-ai/src/providers/LocalLLMProvider.ts
+/tmp/langua-new/archive/legacy-ai/src/types.ts
+
+===== ANDROID TREES =====
+--- current root android ---
+android/app/src/main/java/com/linguaai/assistant/ai/LocalAIPlugin.java
+android/app/src/main/java/com/linguaai/assistant/ai/MainActivity.java
+--- current apps/mobile/android ---
+apps/mobile/android/app/src/main/java/com/linguaai/assistant/MainActivity.java
+apps/mobile/android/app/src/main/java/com/linguaai/assistant/ai/LocalAIPlugin.java
+--- new root android ---
+/tmp/langua-new/android/.gitignore
+/tmp/langua-new/android/app/.gitignore
+/tmp/langua-new/android/app/build.gradle
+/tmp/langua-new/android/app/capacitor.build.gradle
+/tmp/langua-new/android/app/proguard-rules.pro
+/tmp/langua-new/android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java
+/tmp/langua-new/android/app/src/main/AndroidManifest.xml
+/tmp/langua-new/android/app/src/main/cpp/CMakeLists.txt
+/tmp/langua-new/android/app/src/main/cpp/localai_jni.cpp
+/tmp/langua-new/android/app/src/main/java/com/lingua/assistant/MainActivity.java
+/tmp/langua-new/android/app/src/main/java/com/lingua/assistant/plugins/LocalAIPlugin.java
+/tmp/langua-new/android/app/src/main/res/drawable-land-hdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-land-mdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-land-xhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-land-xxhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-land-xxxhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-port-hdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-port-mdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-port-xhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-port-xxhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-port-xxxhdpi/splash.png
+/tmp/langua-new/android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml
+/tmp/langua-new/android/app/src/main/res/drawable/ic_launcher_background.xml
+/tmp/langua-new/android/app/src/main/res/drawable/splash.png
+/tmp/langua-new/android/app/src/main/res/layout/activity_main.xml
+/tmp/langua-new/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+/tmp/langua-new/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+/tmp/langua-new/android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+/tmp/langua-new/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
+/tmp/langua-new/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+/tmp/langua-new/android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+/tmp/langua-new/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
+/tmp/langua-new/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+/tmp/langua-new/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+/tmp/langua-new/android/app/src/main/res/values/ic_launcher_background.xml
+/tmp/langua-new/android/app/src/main/res/values/strings.xml
+/tmp/langua-new/android/app/src/main/res/values/styles.xml
+/tmp/langua-new/android/app/src/main/res/xml/file_paths.xml
+/tmp/langua-new/android/app/src/test/java/com/getcapacitor/myapp/ExampleUnitTest.java
+/tmp/langua-new/android/build.gradle
+/tmp/langua-new/android/capacitor.settings.gradle
+/tmp/langua-new/android/gradle.properties
+/tmp/langua-new/android/gradle/wrapper/gradle-wrapper.jar
+/tmp/langua-new/android/gradle/wrapper/gradle-wrapper.properties
+/tmp/langua-new/android/gradlew
+/tmp/langua-new/android/gradlew.bat
+/tmp/langua-new/android/settings.gradle
+/tmp/langua-new/android/variables.gradle
+
+===== DOCUMENTED RELEASE REPORT =====
+# Release report — Lingua Assistant (debugging/cleanup pass)
+
+This pass reviewed the previous "final" model-agnostic rewrite against
+the actual code (not just the accompanying docs), fixed several real
+bugs and inconsistencies found in that review, and removed dead
+duplicate code. Nothing here required `npm install` (blocked in this
+environment); Python-side checks and TypeScript syntax/type checks
+were run directly.
+
+## Verified as actually working (re-confirmed, not just re-claimed)
+- `gateway/gateway.py`: capability-based routing, vision-skip for
+  text-only providers, and fallback ordering — unit tests pass (3/3).
+- App-server toast timer fix in `App.tsx` (`useRef` instead of a
+  plain object) — real fix, confirmed by reading the code.
+- Real online/offline detection via browser events in `App.tsx` — real
+  fix, confirmed.
+- OCR image bug fix in `server.ts` (`handleOcr` now sends the image as
+  a multimodal content part instead of a truncated base64 text hint) —
+  real fix, confirmed, with an honest caveat already in the code that
+  it still needs a vision-capable model configured.
+
+## Newly found and fixed in this pass
+- **`.env.example` didn't match what `server.ts` reads.** It defined
+  `AI_GATEWAY_URL` / `AI_SERVER_HOST` / `AI_SERVER_PORT`; the code
+  reads `GATEWAY_URL` / `SERVER_HOST` / `SERVER_PORT`. Copying the
+  example file as `.env` configured nothing. Also its gateway port
+  (8787) didn't match the gateway's own default (8080). Fixed.
+- **The `TRAVELAPP_SHARED_SECRET` mechanism did nothing.** The
+  frontend already sent an `x-travelapp-secret` header when
+  configured, but `server.ts` never checked it, and the CORS
+  `Access-Control-Allow-Headers` list didn't even permit the browser
+  to send that header. `server.ts` now validates it (401 if set and
+  mismatched) and allows the header through CORS.
+- **UI copy and comments still named "Qwen" specifically** in
+  `ChatTab.tsx` and `App.tsx`, contradicting the model-agnostic
+  architecture. Reworded to be generic, and to stop claiming the main
+  conversation loop needs no internet at all (see the offline caveat
+  below — it needs a reachable local gateway, which is a narrower and
+  more accurate claim).
+- **`server.ts`'s own docstrings still hardcoded the old
+  `Qwen3 4B -> DeepSeek -> ...` chain** description. Corrected to
+  describe the actual capability-based/no-fixed-model routing.
+- **`sourceLang` was accepted by `/api/translate` but silently
+  dropped** — the frontend sends it, `handleTranslate` destructured it
+  and never used it in the prompt. Now used.
+- **Root `tsconfig.json` had no `include`/`exclude`**, so `tsc --noEmit`
+  at the repo root (the `typecheck:server` script) recursively picked
+  up `apps/mobile` and every `packages/*` workspace too — each of
+  which has its own tsconfig with different compiler options (JSX,
+  DOM lib) — producing irrelevant duplicate/incorrect errors on top of
+  real ones. Scoped to `server.ts` only, which is the one standalone
+  file this root config is actually for.
+- **CI workflow (`.github/workflows/build-apk.yml`) never built the
+  web app.** It ran `gradle assembleDebug` directly, without
+  `npm run build` / `npx cap sync android` first, so the APK packaged
+  whatever (possibly stale or absent) web assets happened to already
+  be committed rather than the current `apps/mobile` build. Fixed;
+  also renamed from "Build Android VPN APK" (leftover, unrelated name
+  from a merged source archive) and corrected the artifact path.
+- **Removed dead/duplicate code** that no longer matched the current
+  monorepo layout and was actively confusing: an entire orphaned
+  legacy app scaffold at the repo root (`src/`, `main.tsx`,
+  `index.html`, `types.ts`, `vite.config.ts`, `metadata.json`,
+  `assets/.aistudio/`), duplicate/orphaned database scaffolding at the
+  root (`DatabaseManager.ts`, `*Repository.ts`, `migrations/`,
+  `repositories/`) superseded by `packages/database/`, a second
+  Android Java package with a typo (`com.lligua.assistant`, duplicate
+  of the real `com.lingua.assistant.plugins.LocalAIPlugin`), and an
+  orphaned `apps/mobile/android/` tree with yet a third, unused
+  package name (`com.linguaai.assistant`) that was never part of the
+  real Capacitor Android project (the one at repo-root `android/`,
+  `appId: com.lingua.assistant`).
+- **`README.md` was stale and directly contradicted
+  `MODEL_ARCHITECTURE.md`** — it still said "the primary AI path is
+  local Qwen3-4B via Ollama." Rewritten to match the actual
+  architecture, and to document the two-process (gateway + app
+  server) setup and its real requirements honestly (see below).
+
+## Documented but not changed — needs a decision, not a guess
+- **`server.ts` and `gateway/gateway.py` both implement the same
+  `/api/*` endpoints independently**, with different prompts. In the
+  normal run, the frontend only ever reaches `server.ts`'s versions
+  (per `apps/mobile/vite.config.ts`'s proxy target), so
+  `gateway.py`'s own task endpoints are dead code in that setup and
+  only matter if the gateway is run standalone. This isn't broken,
+  but it's a source of confusion and prompt drift if edited in only
+  one place. Left as-is pending a decision on which layer should own
+  prompt-building; documented in `README.md` and
+  `MODEL_ARCHITECTURE.md` so it's no longer silently misleading.
+- **The on-device native path (`packages/ai/`, the Capacitor `LocalAI`
+  plugin, `android/app/src/main/cpp/` llama.cpp JNI build) is fully
+  implemented but not wired into the UI.** `ChatTab.tsx` only calls
+  the HTTP gateway path. This means the shipped app's "offline-first"
+  claim currently means "no external internet required as long as a
+  reachable local gateway machine is running Ollama" — not "works on
+  the phone alone." That's a materially different claim from what
+  earlier docs implied, and is now stated plainly in `README.md`
+  rather than left implicit. Wiring the native plugin into `ChatTab`
+  (or removing it, if it's not wanted) is a real feature decision, not
+  a bug fix, and needs direction before touching it.
+
+## Validation performed this pass
+- `python3 -m py_compile gateway/gateway.py`: PASS
+- `python3 -m unittest discover -s gateway`: 3/3 PASS (unchanged)
+- `tsc --noEmit` on the now-scoped root `tsconfig.json`: no errors
+  other than "`@types/node` not installed," which is expected since
+  `npm install` could not reach the registry in this environment and
+  will resolve on a normal `npm install`.
+- `node --experimental-strip-types --check server.ts`: syntax OK.
+- Manual read-through of `server.ts`, `gateway/gateway.py`,
+  `apps/mobile/src/App.tsx`, `apps/mobile/src/components/ChatTab.tsx`,
+  the Android project (root `android/`, `apps/mobile/android/`), CI
+  workflow, and the `.env.example` files against the code that
+  actually reads them.
+- Full `npm install` / `vite build` / Android Gradle build could not
+  be run here (network access to the npm registry and Android SDK is
+  not available in this environment) — recommended as the next step
+  in an environment with registry access.
+
+## Operational truths carried over from the previous report
+No cloud provider can be honestly guaranteed to remain free; quotas
+and pricing are controlled by their operators, so they remain optional
+fallbacks, not requirements. No model is declared universally "best" —
+the application chooses by installed availability and capability.
+
+## Stage 2 — gradual migration + AIProvider abstraction (per user direction)
+
+Implemented exactly the two decisions above, staged (not a rewrite):
+
+**1. server.ts / gateway.py merge — option A, gradual**
+- Added `aiRouter.ts`: a Node-native reimplementation of gateway.py's
+  public interface (Ollama model discovery by capability, vision-aware
+  routing, failover through optional DeepSeek/MiniMax/GLM/Kimi/custom
+  `PROVIDERS_JSON` providers, per-provider cooldown). It reads the same
+  env var names as `gateway/.env.example` by design.
+- Added `aiRouter.test.ts` (Node's built-in test runner, no install
+  needed) mirroring `gateway/test_gateway.py`'s two behavioral checks
+  (fallback order, vision-only routing) against mocked HTTP — all 3
+  pass. Run with `npm run test:ai-router`.
+- `server.ts` now supports `AI_BACKEND=gateway` (default, byte-for-byte
+  the previous behavior - verified by booting it and hitting `/health`)
+  or `AI_BACKEND=node` (routes in-process via `aiRouter.ts`, no Python
+  needed - also booted and verified via `/health`, which now reports
+  which backend answered and the live provider chain).
+- `gateway/gateway.py` was **not modified or removed**. It remains the
+  default and the safety net; `README.md` documents this as step 1 of
+  3 and spells out when NOT to remove it (a future provider needing a
+  Python-only dependency with no solid Node equivalent).
+
+**2. Native/llama.cpp path — option A, wired into the UI**
+- Added `apps/mobile/src/lib/aiProviders.ts`: the `AIProvider`
+  abstraction (`UI -> AiProvider -> {NativeProvider, GatewayProvider}`)
+  exactly as sketched, replacing the old 7-line unused stub of the same
+  name. `gatewayProvider` wraps the existing HTTP path; `nativeProvider`
+  wraps the existing (previously unused) `LocalAI` Capacitor plugin and
+  fails with a clear Persian message (pointing back to the gateway
+  option) if the native engine isn't available or no model is loaded
+  yet, rather than pretending to work.
+- `ChatTab.tsx` now depends only on this abstraction - it no longer
+  imports the gateway HTTP client or the native plugin directly - and
+  has a small segmented control ("گیت‌وی" / "روی خود گوشی") to switch
+  providers per the requested design. The choice persists across
+  restarts via `localStorage` (`getPreferredProviderKey` /
+  `setPreferredProviderKey`), same pattern already used by
+  `progressStore.ts` etc. elsewhere in this app.
+- Not done in this pass: a dedicated Settings tab (none existed; the
+  toggle lives directly in Chat, where it's used) and a first-run UI
+  for picking/downloading a GGUF model file (the plugin already
+  exposes `pickModel()`/`loadModel()` for this - wiring an onboarding
+  flow for it is a follow-up, not a blocker for the abstraction itself).
+
+**Bug caught and fixed during this stage:** the earlier root
+`tsconfig.json` scoping fix (Stage 1) used `"exclude": ["apps",
+"packages", ...]` to stop a bare `tsc --noEmit` at the repo root from
+also recursing into the workspaces. That exclude, once inherited by
+`apps/mobile/tsconfig.json` and every `packages/*/tsconfig.json` (all
+of which `extends` the root config and don't set their own
+`"exclude"`), resolved relative to the repo root and matched each
+workspace's own source directory - silently emptying their builds
+("No inputs were found"). Caught by actually running `tsc --noEmit`
+from inside `apps/mobile` and `packages/database`, not just from the
+root. Fixed by dropping `"exclude"` entirely; `"include": ["server.ts"]`
+alone is sufficient and doesn't have this inheritance problem.
+
+**Validation performed:** `gateway/test_gateway.py` (3/3, unchanged),
+`aiRouter.test.ts` via `node --test` (3/3, new), `server.ts` booted
+live in both `AI_BACKEND` modes with `/health` checked in each,
+`tsc --noEmit` run separately from the repo root, `apps/mobile`, and
+`packages/database` (each workspace typechecks its own files again;
+remaining errors in `apps/mobile` are exclusively missing
+`@types/react`/`@types/node`/`lucide-react` type packages, unresolved
+because `npm install` cannot reach the registry in this environment -
+same pre-existing category as before, not new).
+
+## Stage 3 — completed the native model management flow
+
+The native provider previously had nowhere for a user to actually load
+a model - `LocalAI.pickModel()`/`loadModel()`/`unloadModel()` existed
+in the plugin but nothing in the UI ever called them, so switching to
+"روی خود گوشی" would always just say "no model loaded" with no way
+forward. Added:
+- `getNativeStatus()`, `pickAndLoadNativeModel()`, `unloadNativeModel()`
+  in `aiProviders.ts` (separate from `chat()`, since this is its own
+  multi-step flow with progress feedback).
+- A small status panel in `ChatTab.tsx`, shown only when "روی خود گوشی"
+  is selected: checks status on selection, and shows either "engine
+  unavailable on this platform," a پیک/لود button when no model is
+  loaded, or the loaded model's filename with an unload button.
+
+This was verified by static/type review only (opening the system file
+picker and loading a real GGUF file needs an actual Android device,
+which this environment doesn't have) - flagging that as the one part
+of this stage that still needs a real-device smoke test before you
+rely on it.
+
+## Stage 4 — confirmed final architecture: full feature set
+
+Per direction: architecture is now locked (no further architecture
+changes planned), all three layers (Python gateway, Node router,
+native provider) stay in place as a deliberate safety net, and
+`gateway/gateway.py` is **not** being removed. The following were
+implemented as real, tested code within that locked architecture:
+
+**1. Native -> Ollama -> Cloud priority (real, not aspirational)**
+`autoProvider` added to `aiProviders.ts` and made the default: tries
+the on-device model first when one is actually loaded, and falls back
+to the gateway automatically on any failure or absence. This is the
+mechanism that makes the requested priority order real rather than a
+manual per-session toggle.
+
+**2. Task-aware Smart Routing (capability + task, not just capability)**
+Both `aiRouter.ts` and `gateway/gateway.py` now accept a `task`
+("chat" vs "speaking") that changes local-model ranking: "speaking"
+prefers the smallest/fastest installed Ollama model (latency matters
+more than exact preference match for a live back-and-forth); any other
+task keeps the previous preference-name-then-size ranking. Implemented
+identically in both languages, each with new passing tests
+(`aiRouter.test.ts`: 5/5, `gateway/test_gateway.py`: 5/5). `server.ts`
+threads `task` through both the raw `/v1/chat/completions` call (as an
+extra, non-standard JSON field gateway.py now reads) and its own
+`/api/chat` prompt builder.
+
+**3. Speaking Mode as a first-class, separate mode**
+`ChatTab.tsx` now has a continuous voice loop (listen -> reply -> speak
+-> listen) distinct from typed Chat, with no Send-button requirement
+inside the loop, start/stop controls, and a live phase indicator
+(listening/thinking/speaking). Built entirely on the same browser
+SpeechRecognition/speechSynthesis APIs already used elsewhere in this
+app (extended `playSpeech()` in `App.tsx` with an optional `onEnd`
+callback to drive the loop) - **not** a new offline STT/TTS engine and
+**not** a dedicated VAD algorithm; this is stated plainly in
+`README.md` so it isn't mistaken for more than it is. Genuinely
+offline in-app STT/TTS (e.g. whisper.cpp/piper) would be new native
+plugins and real-device testing, not delivered here.
+
+**4. Language Memory**
+New `apps/mobile/src/languageMemoryStore.ts`: logs the model's own
+"اصلاح:" correction line per dialect (deduped, counted, skips the
+explicit "no correction" marker), and `getFrequentMistakes()` feeds the
+top few back into the prompt (`knownMistakes` in `ChatRequest`,
+threaded through both `aiProviders.ts`'s native-path prompt builder and
+`server.ts`'s `handleChat`).
+
+**5. Adaptive Difficulty**
+New `apps/mobile/src/levelStore.ts`: `computeLevel(dialect)` derives a
+level label purely from real logged pronunciation-practice scores
+already in `progressStore.ts` (average score + attempt count, with a
+5-attempt minimum before leaving "Beginner") - explicitly documented as
+a transparent heuristic, not a validated CEFR placement test. Threaded
+through as `levelHint` the same way as Language Memory.
+
+**6. Accent Coach**
+New `apps/mobile/src/accentCoach.ts` + a collapsible panel in
+`ChatTab.tsx`. Scoped deliberately to the 6 dialect groups this app's
+`PERSONAS` actually cover (Iraqi, Lebanese, Gulf, Egyptian Arabic;
+American, British English) with a handful of well-established,
+accurate tips each (pronunciation, vocabulary, one expression,
+rhythm/grammar) - not an invented exhaustive linguistic database, and
+not fabricated coverage for accents (e.g. Australian, Canadian) with
+no persona/voice in this app.
+
+**7. Model Manager**
+New `GET /api/models` on `server.ts` (proxies to `describeProviders()`
+for `AI_BACKEND=node`, or to the gateway's own `/health` for
+`AI_BACKEND=gateway`) + `apps/mobile/src/lib/modelManager.ts` +
+a "مدیریت مدل‌ها" panel in `ChatTab.tsx` showing the real, live
+provider/model list and availability - never a hardcoded list. Native
+model management (pick/load/unload a GGUF file) was already added in
+Stage 3 and is unchanged here.
+
+**What still needs real-device verification (not possible from this
+development environment, flagged rather than glossed over):**
+- The native model pick/load/unload flow end-to-end on an actual
+  Android device (system file picker, JNI load, inference latency).
+- Speaking Mode's mic/TTS behavior on Android specifically - browser
+  SpeechRecognition support and quality vary by device/WebView/Google
+  services availability in ways this sandboxed environment cannot
+  exercise.
+- Whether `autoProvider`'s native-first behavior actually feels
+  responsive enough in practice to prefer over the gateway once a
+  model is loaded (a latency/quality tradeoff only real usage answers).
+
+**Validation performed this stage:** `python3 -m unittest discover -s
+gateway` (5/5, 2 new), `node --test aiRouter.test.ts` (5/5, 2 new),
+`tsc --noEmit` run separately from the repo root, `apps/mobile`, and
+`packages/database` (all clean beyond the pre-existing
+missing-`@types/node`/`@types/react`/`lucide-react` cascade from this
+environment's blocked npm registry access), and `server.ts` booted
+live with `AI_BACKEND=node` to confirm `/api/models` returns real data
+end-to-end.
+
+## Stage 5 — reprioritization + Streaming + Crash Recovery + Quiz-in-loop
+
+Per direction: deprioritize peripheral features (without deleting
+anything), fold Quiz into the learning loop, and finish the
+before-testing checklist items (Context Manager done in Stage 4;
+Streaming, Crash Recovery done here).
+
+**Self-caught bug this stage:** an earlier edit adding
+`routeChatStream()` to `aiRouter.ts` accidentally left the *old*
+`routeChat()` function's body orphaned without its function signature
+(the signature got overwritten instead of preserved), which broke
+`aiRouter.ts` entirely - it would fail to even load
+(`ERR_INVALID_TYPESCRIPT_SYNTAX: Expression expected`). Caught by
+actually trying to import the file (`node --experimental-strip-types
+-e 'import("./aiRouter.ts")'`), not just by `--check`, which had
+passed despite the corruption. Fixed by restoring the missing
+signature; all tests re-confirmed passing afterward.
+
+**1. Navigation reprioritized (not deleted)**
+Checked first: this repo has zero Game/Leaderboard/Achievement/social
+features to strip out. Tab bar in `App.tsx` now has core tabs (AI
+Chat, Scenario, Compare) always visible, everything else behind a
+"⋯ بیشتر" toggle - Translator, Lingo Quiz, Matrix, Podcast, Planner,
+Sign OCR, SOS Safety. Nothing removed from the codebase. Default tab
+changed from Translator to AI Chat.
+
+**2. Quiz folded into the learning loop**
+New `MistakePracticeCard` in `ChatTab.tsx`: once a session has 2+ real
+logged mistakes, offers a 3-question quiz built specifically from them
+via `/api/quiz`'s new `mistakes` field - implemented identically in
+`server.ts`'s `handleQuiz` and `gateway.py`'s `task_response`
+(Python syntax-checked and existing test suite re-confirmed passing).
+The standalone `QuizTab.tsx` is unchanged and still reachable from
+"بیشتر" for open-ended practice, per the "don't remove Quiz entirely"
+direction.
+
+**3. Streaming (real, end-to-end, not simulated)**
+- `aiRouter.ts`: `routeChatStream()` - same provider selection/failover
+  as `routeChat()`, yields text as it arrives via SSE parsing. 2 new
+  tests (happy path, fallback on an empty stream) - both pass.
+- `gateway/gateway.py`: `try_provider_stream()` / `route_stream()` -
+  same design, proxying the upstream SSE response line-by-line via a
+  new `http_stream_lines()` helper. 2 new tests with a mocked HTTP
+  layer - both pass. `/v1/chat/completions` now branches on
+  `body.get("stream")`.
+- `server.ts`: refactored `handleChat`'s prompt-building into a shared
+  `buildChatPrompt()` (used by both the streaming and non-streaming
+  paths, so they can't drift into different prompts), and added
+  `POST /api/chat/stream`, which streams from whichever `AI_BACKEND`
+  is active as Server-Sent Events.
+- `aiProviders.ts`: `streamGatewayChat()` consumes it; `ChatTab.tsx`
+  updates the reply bubble live as chunks arrive, for typed Chat only
+  (not Speaking Mode - a partial sentence being read by TTS mid-stream
+  would sound broken) and only when "گیت‌وی" is explicitly selected
+  (not "خودکار"/"روی خود گوشی" - streaming here would bypass auto's
+  native-first decision, which happens inside the non-streaming path).
+  Falls back to the regular non-streaming call automatically on any
+  streaming failure.
+- **Real end-to-end verification performed in this environment:**
+  started an actual local HTTP server standing in for Ollama (real SSE
+  responses, not mocked at the fetch layer), ran the actual
+  `gateway/gateway.py` process against it, and hit `server.ts`'s
+  `/api/chat/stream` over real sockets for **both** `AI_BACKEND=node`
+  and `AI_BACKEND=gateway` - confirmed real incremental chunks flow
+  through the whole stack end to end, not just passing isolated unit
+  tests. **Not yet verified against a real Ollama instance or on a
+  real Android device/browser** - flagged as the one remaining check
+  before trusting this in production.
+
+**4. Crash Recovery (UI level)**
+New `apps/mobile/src/components/TabErrorBoundary.tsx`, wrapping the
+tab content area in `App.tsx` (keyed by `activeTab`, so switching tabs
+clears any prior crash state). Confirmed the pre-existing `key`-prop
+TypeScript error this introduced is the same missing-`@types/react`
+cascade already present elsewhere in the codebase (checked: an
+identical `key does not exist on type 'PhraseCardProps'` error already
+existed before this change), not a new issue.
+
+**Still not done from the full priority list (explicitly deferred, not
+silently skipped):**
+- Formal Model Capability Registry / Model Profiles as a named,
+  documented concept (the underlying mechanism - per-provider
+  capability sets, task-aware ranking - already exists in
+  `aiRouter.ts`/`gateway.py` since Stage 4, but hasn't been pulled into
+  one clearly-labeled "registry" the rest of the app references).
+- Benchmark + Diagnostics panel (real device tokens/sec, latency
+  history, RAM).
+- Battery/Temperature Guard, Offline Queue - both need new native
+  Capacitor plugins (e.g. `@capacitor/device`), which is a new
+  dependency decision not made unilaterally here; needs your
+  confirmation before adding.
+
+**Validation performed this stage:** `python3 -m unittest discover -s
+gateway` (7/7, 2 new), `node --test aiRouter.test.ts` (7/7, 2 new),
+`tsc --noEmit` clean (root/apps/mobile/packages, same pre-existing
+missing-type-package cascade only), and the real end-to-end streaming
+test described above against both backends.
+
+## Stage 6 — archived the orphaned legacy AI package
+
+Independently re-verified the finding (dependency search in every
+`package.json`, a repo-wide code search for its exported symbols, and
+a check of every `tsconfig.json`'s `references`) that `packages/ai`
+(`AIManager`/`ModelManager`/`LocalLLMProvider`/`PromptBuilder`/
+`NativePlugin`) has zero live references anywhere - superseded by the
+current `apps/mobile/src/services/localAI.ts` +
+`apps/mobile/src/lib/aiProviders.ts` design, which the old package's
+own `NativePlugin.ts` even has a comment noting. The two apparent
+matches on a quick grep are both false positives, confirmed by
+inspection: `package-lock.json` lists every npm workspace regardless
+of whether anything imports it, and `ChatTab.tsx`'s `ModelManagerPanel`
+is an unrelated same-named React component added for the current Model
+Manager feature, not this package's `ModelManager` class.
+
+Moved `packages/ai` -> `archive/legacy-ai` (out of the npm workspace
+glob `packages/*`, so no explicit `package.json` edit was needed) with
+a new `ARCHIVED.md` documenting exactly what was checked and why it
+was kept rather than deleted (its model-selection and CEFR/dialect
+prompt abstractions may be a useful reference if the native path is
+ever formalized into its own package again). `README.md` now points to
+it. Re-ran the full validation suite after the move (7/7 Python, 7/7
+Node, all three TypeScript workspaces unchanged) to confirm the move
+itself broke nothing - it didn't, since nothing referenced it.
+
+## Stage 6 — packages/ai archive: found and fixed a lockfile break it left behind
+
+The `packages/ai` -> `archive/legacy-ai` move (unused legacy AI
+abstraction layer, superseded by `apps/mobile/src/services/localAI.ts`
++ `apps/mobile/src/lib/aiProviders.ts` - verified via zero imports and
+zero `package.json` dependents outside itself, documented in
+`archive/legacy-ai/ARCHIVED.md`) was already done and already reflected
+in `README.md`.
+
+**What was missed and is fixed now:** `package-lock.json` still had a
+`"packages/ai"` workspace entry and a `"node_modules/@lingua/ai"` link
+entry pointing at a directory that no longer exists. Left in place,
+this would make `npm install`/`npm ci` fail or error for the next
+person to check out this repo, since npm expects a workspace path
+listed in the lockfile to actually exist on disk. Removed both stale
+entries directly from `package-lock.json` (hand-edited via a small
+Python script for a clean, validated JSON diff, since `npm install`
+itself can't be run in this environment to regenerate it) and
+confirmed no other entry in the lockfile still references
+`@lingua/ai`.
+
+**Validation:** lockfile re-parsed successfully as JSON after the
+edit; `python3 -m unittest discover -s gateway` (7/7), `node --test
+aiRouter.test.ts` (7/7), and `tsc --noEmit` across root/apps/mobile/
+packages/database all re-confirmed clean (same pre-existing
+missing-type-package cascade only) - the archive move itself broke
+nothing beyond the lockfile.
+
+===== MODEL ARCHITECTURE =====
+# Lingua Assistant — final architecture
+
+## Product contract
+Personal, offline-first dialect-learning and speaking coach. No model vendor is a compile-time dependency.
+
+## AI model abstraction
+The gateway discovers local Ollama models and routes by **capability**, not by model name. `OLLAMA_MODEL_PREFERENCE` is only a preference list. Any Ollama chat model can be used. OpenAI-compatible custom servers are supported through `PROVIDERS_JSON`.
+
+## Routing
+1. **Native llama.cpp on-device** (via `nativeProvider`/`autoProvider` in `apps/mobile/src/lib/aiProviders.ts`), when a GGUF model is actually loaded - tried first, per project priority.
+2. Installed local Ollama model with `chat` capability (or `vision` for image requests) - reached via the gateway layer (`gateway.py` / `aiRouter.ts`) if native isn't available/loaded, or native itself failed.
+3. Optional DeepSeek, MiniMax, GLM and Kimi fallbacks.
+4. Optional arbitrary OpenAI-compatible providers (`PROVIDERS_JSON`).
+5. Failed providers enter a short cooldown to avoid hammering unavailable services.
+
+Within step 2-4 (the gateway layer), routing is also **task-aware**: a
+`task: "speaking"` request (live spoken-conversation turn) re-ranks
+local Ollama candidates by size ascending (fastest first), since
+latency matters more than exact `OLLAMA_MODEL_PREFERENCE` match for a
+real-time back-and-forth. Any other task keeps the previous
+preference-name-then-size ranking. Implemented identically in
+`aiRouter.ts` and `gateway/gateway.py` (`build_chain(task)` /
+`buildChain(task)`), with matching tests in each.
+
+Cloud credentials are optional and never required for either the
+native or the local-Ollama path.
+
+Note: `gateway/gateway.py` exposes both the low-level OpenAI-compatible
+`/v1/chat/completions` router above and its own higher-level task
+endpoints (`/api/chat`, `/api/translate`, etc.) for standalone use.
+`server.ts` also implements those same task endpoints independently,
+with its own prompts, and is what the frontend actually talks to (see
+README.md). Keep that in mind before editing prompts in only one of
+the two files.
+
+## Honesty note: offline scope
+`autoProvider` (the default) already prefers the native on-device path
+whenever a model is loaded, which is what makes chat genuinely
+self-contained on the phone with zero companion device. When no native
+model is loaded (or native fails), it falls back to the gateway path
+(`server.ts` -> `gateway/gateway.py` or `aiRouter.ts` -> Ollama), which
+does need a reachable machine, since Ollama does not run on Android.
+What still needs real-device verification, not yet done from this
+development environment: the native model pick/load/unload flow
+(`packages/ai/`, the `LocalAI` Capacitor plugin, the llama.cpp JNI
+build under `android/app/src/main/cpp/`) and Speaking Mode's
+mic/TTS behavior on an actual Android device.
+
+## Speech-learning pipeline
+The UI's existing speech/ASR modules remain provider-neutral. Speaking Mode (`ChatTab.tsx`) implements microphone -> browser SpeechRecognition -> conversation engine -> AI router -> browser speechSynthesis as a continuous loop, separate from typed Chat. This uses the device/browser's own speech engine, not a dedicated offline STT/TTS model or a dedicated VAD algorithm - see README.md's honesty note. Vosk remains an opt-in offline English ASR module for other parts of the app.
+
+## Language Memory and Adaptive Difficulty
+`apps/mobile/src/languageMemoryStore.ts` logs the model's own real correction notes per dialect and feeds the most-repeated ones back into future prompts. `apps/mobile/src/levelStore.ts` computes a level label purely from the learner's real logged pronunciation-practice scores (`progressStore.ts`) and feeds it in as well. Neither is a placeholder, a manual setting, or randomized.
+
+## Accent Coach
+`apps/mobile/src/accentCoach.ts` holds a small set of curated, accurate tips per dialect - only for dialects this app has personas/voices for, not a fabricated exhaustive linguistic database.
+
+## Model Manager
+`GET /api/models` on `server.ts` returns the real, currently-available provider/model list (proxying to whichever `AI_BACKEND` is active) for the frontend's "مدیریت مدل‌ها" panel; `apps/mobile/src/lib/aiProviders.ts`'s `pickAndLoadNativeModel()`/`unloadNativeModel()` manage the on-device GGUF model.
+
+## Streaming
+Typed Chat streams replies live via Server-Sent Events end to end (`gateway.py`'s `route_stream()` / `aiRouter.ts`'s `routeChatStream()` -> `server.ts`'s `POST /api/chat/stream` -> `aiProviders.ts`'s `streamGatewayChat()` -> `ChatTab.tsx`), with the same failover/vision/task-aware selection as the non-streaming path. Only used when "گیت‌وی" is explicitly selected; falls back to non-streaming automatically on any failure. Confirmed working end-to-end against a real local SSE test server for both `AI_BACKEND` modes in this environment - not yet verified against real Ollama or on a real device/browser.
+
+## Crash Recovery
+`TabErrorBoundary` (`apps/mobile/src/components/TabErrorBoundary.tsx`) wraps the tab content area in `App.tsx`, keyed by the active tab, so a rendering-time error in one tab doesn't take down the whole app.
+
+## Quiz folded into the learning loop
+`MistakePracticeCard` in `ChatTab.tsx` offers a short quiz built from the session's real logged mistakes (`languageMemoryStore.ts`) via `/api/quiz`'s new `mistakes` field (handled in both `server.ts` and `gateway.py`), once 2+ mistakes have been logged. The standalone `Lingo Quiz` tab is unchanged and still available for open-ended practice.
+
+## Navigation reprioritized
+`App.tsx`'s tab bar splits into always-visible core tabs (AI Chat, Scenario, Compare) and a "بیشتر" (More) group for everything travel-useful but not part of the speaking/pronunciation loop (Translator, Lingo Quiz, Matrix, Podcast, Planner, Sign OCR, SOS Safety) - nothing deleted, just reprioritized. Default tab changed from Translator to AI Chat. This app never had Game/Leaderboard/Achievement features to strip out (checked, zero matches).
+
+## Data and learning
+Existing local stores for progress, SRS, media, backups, vocabulary and conversations are preserved. Model choice is runtime configuration, so changing a model does not require a database migration or application update.
+
+## llama.cpp
+`scripts/install-llama.sh` retrieves the current upstream repository and builds it. Upstream has moved away from GNU Make as its primary build system, so the script attempts `make` for compatibility and then uses the supported CMake build.
+
+## Security
+API keys are environment-only. They are not committed, logged or returned by health endpoints. The gateway is intended for personal/local use; if exposed beyond localhost, put it behind authentication/TLS.
+
+===== MERGE REPORT =====
+# Merge report
+
+Source A: `workspace(1).zip`
+Source B: `vpn-main-PHASE8D-r4-gateway.zip`
+
+## Strategy
+- Identical files were retained without modification.
+- Files present in only one archive were copied into the merged project.
+- For conflicts, functionality was compared rather than blindly choosing by byte size.
+- The workspace gateway/server versions were retained where they had broader routing/API coverage; Phase8D gateway-aware mobile helpers were integrated where they added missing functionality.
+- `apps/mobile/src/App.tsx` keeps the Phase8D gateway/offline UI additions, with its health check aligned to the actual Node server response.
+- `gateway/gateway.py` keeps the OpenAI-compatible/streaming router and adds Phase8D higher-level Lingua task endpoints.
+- Python caches were excluded from the final archive.
+
+## Validation performed
+- Python gateway syntax compilation
+- Gateway unit tests
+- Archive integrity check
+- Static source inspection of the merged server/gateway/mobile integration
+
+============================================================
+END OF ANALYSIS INPUT
+============================================================
