@@ -11,6 +11,30 @@
     "exactOptionalPropertyTypes": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
+  },
+  /*
+   * This project is an npm workspaces monorepo: apps/mobile and
+   * packages/* each have their own tsconfig.json (extending this one)
+   * and are typechecked separately (see "npm run typecheck" in
+   * package.json). Each of those overrides "include" with its own
+   * paths, so restricting this base config to server.ts here does not
+   * affect them.
+   *
+   * Deliberately no "exclude" here: tsconfig.json "exclude" IS
+   * inherited by files that `extends` this config and did not set
+   * their own "exclude" (apps/mobile/tsconfig.json, every
+   * packages/*\/tsconfig.json) - and, being inherited, it is resolved
+   * relative to *this* directory (the repo root), not theirs. An
+   * earlier version of this fix added
+   * "exclude": ["apps", "packages", ...] to stop a bare `tsc --noEmit`
+   * here from also recursing into every workspace - but that pattern,
+   * once inherited, matched each workspace's own source directory too
+   * (e.g. "apps" matched apps/mobile/src) and silently emptied their
+   * builds ("No inputs were found"). "include": ["server.ts"] alone is
+   * enough to scope this config to the one standalone file it exists
+   * for; no exclude is needed on top of it.
+   */
+  "include": ["server.ts"]
 }

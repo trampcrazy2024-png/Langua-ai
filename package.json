@@ -9,10 +9,16 @@
   "scripts": {
     "dev": "npm --workspace apps/mobile run dev",
     "build": "npm --workspace apps/mobile run build",
-    "typecheck": "npm --workspace apps/mobile run typecheck",
+    "typecheck": "npm --workspace apps/mobile run typecheck && npm run typecheck:server",
+    "typecheck:server": "tsc --noEmit",
+    "server": "node --experimental-strip-types server.ts",
+    "gateway": "python3 gateway/gateway.py",
     "android:sync": "npm run build && npx cap sync android",
     "android:open": "npx cap open android",
-    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug"
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "test": "npm --workspace apps/mobile run test",
+    "test:ai-router": "node --experimental-strip-types --test aiRouter.test.ts",
+    "gateway:test": "python3 -m unittest discover -s gateway -p \"test_*.py\" -v"
   },
   "workspaces": [
     "apps/*",
@@ -24,6 +30,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.0.0",
+    "@types/node": "^22.10.0",
     "typescript": "^5.7.0",
     "vite": "^7.0.0"
   }

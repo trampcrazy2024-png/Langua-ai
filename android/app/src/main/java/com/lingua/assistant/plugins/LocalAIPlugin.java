@@ -17,6 +17,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @CapacitorPlugin(name = "LocalAI")
 public class LocalAIPlugin extends Plugin {
@@ -28,10 +30,83 @@ public class LocalAIPlugin extends Plugin {
     private boolean modelLoaded = false;
     private String loadedModelPath = null;
 
+    /*
+     * Review fix #3: status codes returned by nativeGenerateStream().
+     * Must stay numerically in sync with STATUS_* in localai_jni.cpp.
+     */
+    private static final int STATUS_DONE = 0;
+    private static final int STATUS_ERROR = 1;
+    private static final int STATUS_CANCELLED = 2;
+
+    /*
+     * Phase 8-C: generation must never run on Capacitor's calling
+     * thread, since llama_decode() is a long, synchronous, CPU-bound
+     * call. A dedicated single-thread executor keeps model calls
+     * serialized (only one generation/load at a time, which matches
+     * the single global g_model/g_ctx in the native layer) while
+     * keeping the UI thread completely free.
+     */
+    private final ExecutorService aiExecutor =
+            Executors.newSingleThreadExecutor();
+
+    /*
+     * Accumulates the streamed reply for the current in-flight
+     * streamChat() call. Only one stream runs at a time (serialized
+     * by aiExecutor), so a single buffer is safe.
+     */
+    private final StringBuilder streamBuffer = new StringBuilder();
+
+    /*
+     * Review fix #5: batch native token callbacks into a JS event
+     * every ~40ms instead of firing a Capacitor event per token.
+     * On a fast decode this can otherwise mean dozens of bridge
+     * messages per second, which is wasteful on low-end devices.
+     */
+    private final StringBuilder pendingChunk = new StringBuilder();
+    private long lastFlushNanos = 0;
+    private static final long FLUSH_INTERVAL_NANOS = 40_000_000L;
+
     private native boolean nativeLoadModel(String modelPath);
     private native void nativeUnloadModel();
     private native boolean nativeIsLoaded();
     private native String nativeGenerate(String prompt);
+    private native int nativeGenerateStream(String prompt);
+    private native void nativeCancelGeneration();
+
+    /*
+     * Called directly from native code (JNIEnv::CallVoidMethod),
+     * on the aiExecutor background thread - never on the UI thread.
+     * notifyListeners() is safe to call off the main thread; the
+     * Capacitor bridge marshals the event to the webview itself.
+     */
+    public void onNativeToken(String piece) {
+        if (piece == null || piece.isEmpty()) {
+            return;
+        }
+
+        streamBuffer.append(piece);
+        pendingChunk.append(piece);
+
+        long now = System.nanoTime();
+
+        if (now - lastFlushNanos >= FLUSH_INTERVAL_NANOS) {
+            flushPendingChunk();
+            lastFlushNanos = now;
+        }
+    }
+
+    private void flushPendingChunk() {
+        if (pendingChunk.length() == 0) {
+            return;
+        }
+
+        JSObject data = new JSObject();
+        data.put("token", pendingChunk.toString());
+
+        notifyListeners("generationToken", data);
+
+        pendingChunk.setLength(0);
+    }
 
     @PluginMethod
     public void ping(PluginCall call) {
@@ -213,50 +288,59 @@ public class LocalAIPlugin extends Plugin {
             return;
         }
 
-        try {
-            boolean loaded = nativeLoadModel(path);
+        /*
+         * Model loading reads a multi-hundred-MB file and builds
+         * the whole KV cache - also belongs on aiExecutor, not the
+         * calling thread.
+         */
+        aiExecutor.execute(() -> {
+            try {
+                boolean loaded = nativeLoadModel(path);
 
-            if (!loaded) {
+                if (!loaded) {
+                    modelLoaded = false;
+                    loadedModelPath = null;
+                    call.reject("Failed to load local model");
+                    return;
+                }
+
+                modelLoaded = true;
+                loadedModelPath = path;
+
+                JSObject result = new JSObject();
+                result.put("ok", true);
+                result.put("loaded", true);
+                result.put("path", loadedModelPath);
+                result.put("engine", "llama.cpp");
+
+                call.resolve(result);
+
+            } catch (Exception e) {
                 modelLoaded = false;
                 loadedModelPath = null;
-                call.reject("Failed to load local model");
-                return;
+                call.reject("Model load failed: " + e.getMessage());
             }
-
-            modelLoaded = true;
-            loadedModelPath = path;
-
-            JSObject result = new JSObject();
-            result.put("ok", true);
-            result.put("loaded", true);
-            result.put("path", loadedModelPath);
-            result.put("engine", "llama.cpp");
-
-            call.resolve(result);
-
-        } catch (Exception e) {
-            modelLoaded = false;
-            loadedModelPath = null;
-            call.reject("Model load failed: " + e.getMessage());
-        }
+        });
     }
 
     @PluginMethod
     public void unloadModel(PluginCall call) {
-        try {
-            nativeUnloadModel();
-        } catch (Exception ignored) {
-        }
+        aiExecutor.execute(() -> {
+            try {
+                nativeUnloadModel();
+            } catch (Exception ignored) {
+            }
 
-        modelLoaded = false;
-        loadedModelPath = null;
+            modelLoaded = false;
+            loadedModelPath = null;
 
-        JSObject result = new JSObject();
-        result.put("ok", true);
-        result.put("loaded", false);
-        result.put("engine", "llama.cpp");
+            JSObject result = new JSObject();
+            result.put("ok", true);
+            result.put("loaded", false);
+            result.put("engine", "llama.cpp");
 
-        call.resolve(result);
+            call.resolve(result);
+        });
     }
 
     @PluginMethod
@@ -273,20 +357,22 @@ public class LocalAIPlugin extends Plugin {
             return;
         }
 
-        try {
-            String response = nativeGenerate(prompt);
+        aiExecutor.execute(() -> {
+            try {
+                String response = nativeGenerate(prompt);
 
-            JSObject result = new JSObject();
-            result.put("value", response != null ? response : "");
-            result.put("modelLoaded", true);
-            result.put("modelPath", loadedModelPath);
-            result.put("engine", "llama.cpp");
+                JSObject result = new JSObject();
+                result.put("value", response != null ? response : "");
+                result.put("modelLoaded", true);
+                result.put("modelPath", loadedModelPath);
+                result.put("engine", "llama.cpp");
 
-            call.resolve(result);
+                call.resolve(result);
 
-        } catch (Exception e) {
-            call.reject("Local generation failed: " + e.getMessage());
-        }
+            } catch (Exception e) {
+                call.reject("Local generation failed: " + e.getMessage());
+            }
+        });
     }
 
     @PluginMethod
@@ -303,19 +389,121 @@ public class LocalAIPlugin extends Plugin {
             return;
         }
 
+        aiExecutor.execute(() -> {
+            try {
+                String response = nativeGenerate(message);
+
+                JSObject result = new JSObject();
+                result.put("value", response != null ? response : "");
+                result.put("modelLoaded", true);
+                result.put("modelPath", loadedModelPath);
+                result.put("engine", "llama.cpp");
+
+                call.resolve(result);
+
+            } catch (Exception e) {
+                call.reject("Local chat failed: " + e.getMessage());
+            }
+        });
+    }
+
+    /*
+     * Phase 8-D: streaming variant of chat(). Fires a "generationToken"
+     * event (batched, see onNativeToken) as pieces are produced, then
+     * a "generationStatus" event + the resolved/rejected promise once
+     * generation ends - covering the START/TOKEN/DONE/ERROR/CANCELLED
+     * lifecycle from the review, not just a silent Promise completion.
+     */
+    @PluginMethod
+    public void streamChat(PluginCall call) {
+        if (!modelLoaded || !nativeIsLoaded()) {
+            call.reject("No local model is loaded");
+            return;
+        }
+
+        String message = call.getString("message");
+
+        if (message == null || message.trim().isEmpty()) {
+            call.reject("Message is required");
+            return;
+        }
+
+        aiExecutor.execute(() -> {
+            try {
+                streamBuffer.setLength(0);
+                pendingChunk.setLength(0);
+                lastFlushNanos = System.nanoTime();
+
+                notifyListeners("generationStatus", statusEvent("start"));
+
+                int status = nativeGenerateStream(message);
+
+                /*
+                 * Flush whatever hasn't hit the 40ms threshold yet,
+                 * so no trailing text is lost.
+                 */
+                flushPendingChunk();
+
+                String statusName = statusName(status);
+
+                notifyListeners("generationStatus", statusEvent(statusName));
+
+                if (status == STATUS_ERROR) {
+                    call.reject("Local generation failed during streaming");
+                    return;
+                }
+
+                JSObject result = new JSObject();
+                result.put("value", streamBuffer.toString());
+                result.put("status", statusName);
+                result.put("modelLoaded", true);
+                result.put("modelPath", loadedModelPath);
+                result.put("engine", "llama.cpp");
+
+                call.resolve(result);
+
+            } catch (Exception e) {
+                call.reject("Local streaming generation failed: " + e.getMessage());
+            }
+        });
+    }
+
+    /*
+     * Review fix #4: lets the UI stop an in-flight streamChat().
+     * Cancellation is cooperative - it sets a flag that the native
+     * generation loop checks once per token, so it can take up to
+     * one token's worth of time to actually stop (fine in practice,
+     * since a single decode step is a few ms to a few dozen ms).
+     */
+    @PluginMethod
+    public void cancelGeneration(PluginCall call) {
         try {
-            String response = nativeGenerate(message);
+            nativeCancelGeneration();
 
             JSObject result = new JSObject();
-            result.put("value", response != null ? response : "");
-            result.put("modelLoaded", true);
-            result.put("modelPath", loadedModelPath);
-            result.put("engine", "llama.cpp");
+            result.put("ok", true);
 
             call.resolve(result);
 
         } catch (Exception e) {
-            call.reject("Local chat failed: " + e.getMessage());
+            call.reject("Cancel failed: " + e.getMessage());
         }
+    }
+
+    private String statusName(int status) {
+        switch (status) {
+            case STATUS_CANCELLED:
+                return "cancelled";
+            case STATUS_ERROR:
+                return "error";
+            default:
+                return "done";
+        }
+    }
+
+    private JSObject statusEvent(String status) {
+        JSObject event = new JSObject();
+        event.put("status", status);
+        return event;
     }
 }
