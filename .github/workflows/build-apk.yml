@@ -2,44 +2,41 @@ name: Build Android APK
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: [ "main", "master" ]
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   build:
-    name: Build & Upload Debug APK
+    name: Build & Upload Debug APK (Zipped)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
+          node-version: '20'
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: "21"
-          distribution: "temurin"
-          cache: gradle
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle 8.5
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Install npm dependencies
-        run: npm ci
+        run: npm install
 
-      # llama.cpp is fetched at build time and is never required
-      # to be committed into the Git repository.
+      # نصب و کامپایل llama.cpp مستقیماً در محیط CI
       - name: Install and build llama.cpp
         shell: bash
         run: |
@@ -53,62 +50,29 @@ jobs:
 
           git clone --depth 1 "$LLAMA_REPO" "$LLAMA_DIR"
 
-          cd "$LLAMA_DIR"
-          make -j"$(nproc)"
+          cmake -S "$LLAMA_DIR" \
+                -B "$LLAMA_DIR/build" \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DGGML_NATIVE=OFF
 
-          test -f llama-cli || test -f build/bin/llama-cli
+          cmake --build "$LLAMA_DIR/build" \
+                --config Release \
+                --parallel "$(nproc)"
 
-      - name: Verify project scripts
-        shell: bash
-        run: |
-          set -euo pipefail
+          test -f "$LLAMA_DIR/build/bin/llama-cli"
 
-          test -f package.json
-          test -f android/gradlew
-          test -f apps/mobile/package.json
-
-          chmod +x android/gradlew
-
-      - name: Build web app and sync Android
+      # ساخت وب‌اپ و سینک کردن آن با اندروید
+      - name: Build web app and sync into the Android project
         run: npm run android:sync
 
+      # اجرای بیلد داخل پوشه‌ی اندروید
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug
 
-      - name: Verify APK
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          APK="$(find android/app/build/outputs/apk/debug -type f -name '*.apk' | head -n 1)"
-
-          test -n "$APK"
-          test -f "$APK"
-
-          echo "APK generated:"
-          ls -lh "$APK"
-
-      - name: Package APK
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          mkdir -p artifacts
-
-          APK="$(find android/app/build/outputs/apk/debug -type f -name '*.apk' | head -n 1)"
-
-          cp "$APK" artifacts/lingua-assistant-debug.apk
-
-          cd artifacts
-          zip -9 lingua-assistant-debug-apk.zip lingua-assistant-debug.apk
-
-          ls -lh *
-
-      - name: Upload Debug APK Artifact
+      # آپلود خروجی به صورت زیپ‌شده
+      - name: Upload Debug APK Artifact (Zipped)
         uses: actions/upload-artifact@v4
         with:
           name: lingua-assistant-debug-apk
-          path: artifacts/lingua-assistant-debug-apk.zip
-          if-no-files-found: error
-          retention-days: 14
+          path: android/app/build/outputs/apk/
