@@ -4,7 +4,7 @@ import { ChatMessage } from "../types";
 import { getLangCode, PERSONAS } from "../data";
 import { getPreferredProviderKey, setPreferredProviderKey, listProviders, gatewayProvider, getNativeStatus, pickAndLoadNativeModel, unloadNativeModel, streamGatewayChat, type AiProviderKey, type NativeStatus } from "../lib/aiProviders";
 import { apiFetch } from "../lib/net";
-import { getGatewayBaseUrl, setGatewayBaseUrl } from "../lib/config";
+import { getGatewayBaseUrl, setGatewayBaseUrl, getOpenRouterApiKey, setOpenRouterApiKey, getGeminiApiKey, setGeminiApiKey } from "../lib/config";
 import { startSpeechRecognition, stopNativeSpeech } from "../lib/nativeSpeech";
 import { getFrequentMistakes, logMistake } from "../languageMemoryStore";
 import { computeLevel } from "../levelStore";
@@ -46,6 +46,9 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
   // user set it at runtime instead - see lib/config.ts.
   const [gatewayUrlInput, setGatewayUrlInput] = useState<string>(() => getGatewayBaseUrl());
   const [gatewayUrlSaved, setGatewayUrlSaved] = useState(false);
+  const [openRouterKey, setOpenRouterKey] = useState(() => getOpenRouterApiKey());
+  const [geminiKey, setGeminiKey] = useState(() => getGeminiApiKey());
+  const [cloudKeysSaved, setCloudKeysSaved] = useState(false);
   const providers = listProviders();
   const activeProvider = providers.find((p) => p.key === providerKey) ?? gatewayProvider;
   // Quiz-into-learning-loop: distinct real corrections from this session,
@@ -436,6 +439,18 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
                 </button>
               </div>
             )}
+          </div>
+        )}
+        {(providerKey === "cloud" || providerKey === "auto") && (
+          <div className="bg-[#090D16] border border-[#1E293B] rounded-xl p-2.5 space-y-2">
+            <span className="text-[10px] text-[#94A3B8] block">
+              مسیر اینترنتی رایگان: ابتدا OpenRouter Free و سپس Gemini با سهمیه رایگان امتحان می‌شوند. کلید API را از سرویس مربوطه بگیرید؛ کلید فقط روی همین گوشی ذخیره می‌شود.
+            </span>
+            <input type="password" dir="ltr" value={openRouterKey} onChange={(e) => { setOpenRouterKey(e.target.value); setCloudKeysSaved(false); }} placeholder="OpenRouter API key (اختیاری)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
+            <input type="password" dir="ltr" value={geminiKey} onChange={(e) => { setGeminiKey(e.target.value); setCloudKeysSaved(false); }} placeholder="Gemini API key (اختیاری)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
+            <button onClick={() => { setOpenRouterApiKey(openRouterKey); setGeminiApiKey(geminiKey); setCloudKeysSaved(true); triggerToast("✅ کلیدهای اینترنتی ذخیره شد."); }} className="w-full bg-[#14B8A6] text-black font-black px-3 py-1.5 rounded-lg text-[10px]">
+              {cloudKeysSaved ? "ذخیره شد ✓" : "ذخیره کلیدها"}
+            </button>
           </div>
         )}
         {(providerKey === "gateway" || providerKey === "auto") && (

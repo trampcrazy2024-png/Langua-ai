@@ -9,6 +9,7 @@ import android.webkit.WebChromeClient;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
 import com.lingua.assistant.plugins.LocalAIPlugin;
 
@@ -49,7 +50,7 @@ public class MainActivity extends BridgeActivity {
      * already handles keeps working exactly as before.
      */
     private class BridgeWebChromeClientWithMic extends com.getcapacitor.BridgeWebChromeClient {
-        BridgeWebChromeClientWithMic(com.getcapacitor.Bridge bridge) {
+        BridgeWebChromeClientWithMic(Bridge bridge) {
             super(bridge);
         }
 

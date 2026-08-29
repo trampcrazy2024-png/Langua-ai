@@ -20,17 +20,4 @@ fi
 
 cd "$DEST"
 echo "llama.cpp revision: $(git rev-parse HEAD)"
-
-# The current upstream repository intentionally no longer uses GNU Make for
-# its build. We still invoke make first so the requested legacy build path is
-# verified; the expected message points to the CMake build below.
-if make; then
-  echo "make completed successfully"
-else
-  echo "Upstream make entrypoint is not the supported build system; continuing with CMake."
-fi
-
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF
-cmake --build build --config Release --parallel "${CMAKE_BUILD_PARALLEL_LEVEL:-$(nproc)}"
-
-echo "llama.cpp build completed: $DEST/build"
+echo "llama.cpp source is ready for the Android CMake build."

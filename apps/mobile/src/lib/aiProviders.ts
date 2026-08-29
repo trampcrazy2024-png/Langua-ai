@@ -22,9 +22,9 @@
 
 import LocalAI from "../services/localAI";
 import { localAIChat } from "./localAIChat";
-import { apiUrl } from "./config";
+import { apiUrl, getOpenRouterApiKey, getGeminiApiKey } from "./config";
 
-export type AiProviderKey = "auto" | "gateway" | "native";
+export type AiProviderKey = "auto" | "gateway" | "native" | "cloud";
 
 export interface ChatTurn {
   sender: "user" | "companion";
@@ -92,6 +92,60 @@ function buildFlatPrompt(payload: ChatRequest): string {
     .filter(Boolean)
     .join("\n");
 }
+
+
+async function freeCloudChat(payload: ChatRequest): Promise<string> {
+  const prompt = buildFlatPrompt(payload);
+  const openRouterKey = getOpenRouterApiKey();
+  const geminiKey = getGeminiApiKey();
+  const errors: string[] = [];
+
+  if (openRouterKey) {
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${openRouterKey}`,
+          "HTTP-Referer": "https://github.com/trampcrazy2024-png/Langua-ai",
+          "X-Title": "Langua AI",
+        },
+        body: JSON.stringify({ model: "openrouter/free", messages: [{ role: "user", content: prompt }], temperature: 0.7 }),
+      });
+      if (!res.ok) throw new Error(`OpenRouter HTTP ${res.status}`);
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content;
+      if (typeof text === "string" && text.trim()) return text.trim();
+      throw new Error("OpenRouter returned an empty response");
+    } catch (e) { errors.push(String(e)); }
+  }
+
+  if (geminiKey) {
+    try {
+      const model = "gemini-3.7-flash";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(geminiKey)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] }),
+      });
+      if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text || "").join("").trim();
+      if (text) return text;
+      throw new Error("Gemini returned an empty response");
+    } catch (e) { errors.push(String(e)); }
+  }
+
+  throw new Error(errors.length ? `سرویس‌های رایگان اینترنتی در دسترس نبودند: ${errors.join(" | ")}` : "برای مسیر اینترنتی رایگان، کلید OpenRouter یا Gemini را در تنظیمات وارد کنید.");
+}
+
+export const cloudProvider: AiProvider = {
+  key: "cloud",
+  label: "اینترنت رایگان",
+  description: "بدون سرور شخصی؛ ابتدا OpenRouter Free و سپس Gemini با سهمیه رایگان را امتحان می‌کند. کلیدها فقط روی همین دستگاه ذخیره می‌شوند.",
+  chat: freeCloudChat,
+};
 
 export const gatewayProvider: AiProvider = {
   key: "gateway",
@@ -165,7 +219,7 @@ export const nativeProvider: AiProvider = {
 export const autoProvider: AiProvider = {
   key: "auto",
   label: "خودکار",
-  description: "ابتدا مدل روی خود گوشی را امتحان می‌کند (در صورت بارگذاری بودن)، وگرنه خودکار به گیت‌وی (Ollama سپس Cloud) می‌رود.",
+  description: "ابتدا مدل روی خود گوشی را امتحان می‌کند، سپس سرویس‌های اینترنتی رایگانِ تنظیم‌شده (OpenRouter/Gemini)، و در نهایت گیت‌وی را امتحان می‌کند.",
   async chat(payload) {
     const status = await getNativeStatus();
     if (status.available && status.modelLoaded) {
@@ -176,12 +230,15 @@ export const autoProvider: AiProvider = {
         // fall through to gateway below
       }
     }
+    try { return await cloudProvider.chat(payload); } catch (cloudError) {
+      console.warn("[ai-providers] free cloud failed, falling back to gateway:", cloudError);
+    }
     return gatewayProvider.chat(payload);
   },
 };
 
 export function listProviders(): AiProvider[] {
-  return [autoProvider, nativeProvider, gatewayProvider];
+  return [autoProvider, nativeProvider, cloudProvider, gatewayProvider];
 }
 
 /**
@@ -285,7 +342,7 @@ const PROVIDER_STORAGE_KEY = "travelapp_ai_provider";
 export function getPreferredProviderKey(): AiProviderKey {
   try {
     const stored = localStorage.getItem(PROVIDER_STORAGE_KEY);
-    if (stored === "native" || stored === "gateway" || stored === "auto") return stored;
+    if (stored === "native" || stored === "gateway" || stored === "cloud" || stored === "auto") return stored;
   } catch {
     // localStorage unavailable (e.g. private browsing) - fall through to default
   }
@@ -307,5 +364,6 @@ export function getPreferredProvider(): AiProvider {
   const key = getPreferredProviderKey();
   if (key === "native") return nativeProvider;
   if (key === "gateway") return gatewayProvider;
+  if (key === "cloud") return cloudProvider;
   return autoProvider;
 }

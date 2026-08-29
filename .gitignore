@@ -22,10 +22,3 @@ models/
 *.gguf
 *.bin
 *.onnx
-
-# Keep Android LocalAI native sources in the repository.
-!android/app/src/main/cpp/
-!android/app/src/main/cpp/**
-!third-party/
-!third-party/llama.cpp/
-!third-party/llama.cpp/**

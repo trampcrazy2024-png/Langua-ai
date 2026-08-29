@@ -45,3 +45,28 @@ export function apiUrl(path: string): string {
   const base = getGatewayBaseUrl();
   return `${base.replace(/\/$/, "")}/${path.replace(/^\/+/, "")}`;
 }
+
+
+const OPENROUTER_KEY_STORAGE = "travelapp_openrouter_api_key";
+const GEMINI_KEY_STORAGE = "travelapp_gemini_api_key";
+
+export function getOpenRouterApiKey(): string {
+  try { return localStorage.getItem(OPENROUTER_KEY_STORAGE) || ""; } catch { return ""; }
+}
+export function setOpenRouterApiKey(value: string): void {
+  try {
+    const v = value.trim();
+    if (v) localStorage.setItem(OPENROUTER_KEY_STORAGE, v);
+    else localStorage.removeItem(OPENROUTER_KEY_STORAGE);
+  } catch {}
+}
+export function getGeminiApiKey(): string {
+  try { return localStorage.getItem(GEMINI_KEY_STORAGE) || ""; } catch { return ""; }
+}
+export function setGeminiApiKey(value: string): void {
+  try {
+    const v = value.trim();
+    if (v) localStorage.setItem(GEMINI_KEY_STORAGE, v);
+    else localStorage.removeItem(GEMINI_KEY_STORAGE);
+  } catch {}
+}

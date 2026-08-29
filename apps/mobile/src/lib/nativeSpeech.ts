@@ -33,7 +33,6 @@
 
 import { Capacitor } from "@capacitor/core";
 import { SpeechRecognition as NativeSTT } from "@capacitor-community/speech-recognition";
-import { TextToSpeech as NativeTTS } from "@capacitor-community/text-to-speech";
 
 export interface RecognitionHandle {
   stop(): void;
@@ -195,6 +194,6 @@ export async function speakNative(
 
 export function stopNativeSpeech(): void {
   if (Capacitor.isNativePlatform()) {
-    NativeTTS.stop().catch(() => {});
+
   }
 }
