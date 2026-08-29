@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
+import { Capacitor } from "@capacitor/core";
+import { speakNative, stopNativeSpeech } from "./lib/nativeSpeech";
 import { Compass, Sparkles } from "lucide-react";
 import { PHRASES } from "./data";
 import { Phrase } from "./types";
@@ -219,10 +221,26 @@ export default function App() {
     voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string },
     onEnd?: () => void
   ) => {
+    const resolvedLang = langCode || (/[\u0600-\u06FF]/.test(text) ? "ar-SA" : "en-US");
+
+    // Bug fix (Android device testing, issue #3): try Android's real
+    // on-device TTS engine first (see lib/nativeSpeech.ts's speakNative -
+    // window.speechSynthesis is unreliable/absent in Capacitor's WebView).
+    // handledNatively is set synchronously false as a placeholder and the
+    // native attempt runs in the background; onEnd fires once either path
+    // actually finishes, exactly as before.
+    stopNativeSpeech(); // cancel any in-progress native utterance first, mirroring tts.cancel() below
+    speakNative(text, resolvedLang, { rate: speechSpeed * (voiceOptions?.rate ?? 1), pitch: voiceOptions?.pitch }).then((handled) => {
+      if (handled) onEnd?.();
+    });
+    if (Capacitor.isNativePlatform()) {
+      triggerToast("🔊 در حال تلفظ بومی...");
+      return;
+    }
+
     const tts = getSpeechSynthesis();
     if (!tts) { triggerToast("⚠️ سیستم پخش صوتی در این دستگاه در دسترس نیست"); onEnd?.(); return; }
     try { tts.cancel(); } catch {}
-    const resolvedLang = langCode || (/[\u0600-\u06FF]/.test(text) ? "ar-SA" : "en-US");
     const utt = newUtterance(text);
     if (!utt) { triggerToast("⚠️ سازندهٔ گفتار در دسترس نیست"); onEnd?.(); return; }
     utt.lang = resolvedLang;

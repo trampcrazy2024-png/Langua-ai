@@ -6,6 +6,7 @@ import {
 import { ChatMessage } from "../types";
 import { SCENARIOS, PERSONAS, getLangCode, ScenarioDef, Persona } from "../data";
 import { apiFetch } from "../lib/net";
+import { startSpeechRecognition } from "../lib/nativeSpeech";
 
 interface ScenarioTabProps {
   playSpeech: (text: string, id: string, langCode?: string, voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string }) => void;
@@ -154,28 +155,18 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
   };
 
   const handleVoiceInput = () => {
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognitionCtor || !navigator.mediaDevices?.getUserMedia) {
-      triggerToast("⚠️ ورودی صوتی در این مرورگر پشتیبانی نمی‌شود.");
+    const handle = startSpeechRecognition({
+      lang: selectedPersona.lang === "english" ? "en-US" : "fa-IR",
+      onSpeechStart: () => setRecording(true),
+      onResult: (heard) => setInput(heard),
+      onError: (message) => triggerToast(message),
+      onEnd: () => { setRecording(false); activeRecognitionRef.current = null; },
+    });
+    if (!handle) {
+      triggerToast("⚠️ ورودی صوتی روی این دستگاه پشتیبانی نمی‌شود.");
       return;
     }
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      activeStreamRef.current = stream;
-      const recognition = new SpeechRecognitionCtor();
-      activeRecognitionRef.current = recognition;
-      recognition.lang = selectedPersona.lang === "english" ? "en-US" : "fa-IR";
-      recognition.interimResults = false;
-      setRecording(true);
-      recognition.onresult = (event: any) => setInput(event.results[0][0].transcript);
-      recognition.onerror = () => triggerToast("تشخیص گفتار ناموفق بود.");
-      recognition.onend = () => {
-        setRecording(false);
-        stream.getTracks().forEach((t) => t.stop());
-        activeStreamRef.current = null;
-        activeRecognitionRef.current = null;
-      };
-      recognition.start();
-    }).catch(() => triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد."));
+    activeRecognitionRef.current = handle;
   };
 
   const finishScenario = async () => {

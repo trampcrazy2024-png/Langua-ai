@@ -52,4 +52,18 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
+
+    <!--
+      Bug fix (Android device testing, issue #4 continued): on Android 11+
+      (API 30+), package visibility restrictions mean PackageManager can't
+      resolve the on-device speech recognition service unless the app
+      declares it here - without this, @capacitor-community/speech-
+      recognition's available()/start() calls can fail to find the
+      recognizer even with RECORD_AUDIO granted. See lib/nativeSpeech.ts.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
 </manifest>

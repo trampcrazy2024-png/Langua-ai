@@ -5,6 +5,7 @@ import { getLangCode, PERSONAS } from "../data";
 import { getPreferredProviderKey, setPreferredProviderKey, listProviders, gatewayProvider, getNativeStatus, pickAndLoadNativeModel, unloadNativeModel, streamGatewayChat, type AiProviderKey, type NativeStatus } from "../lib/aiProviders";
 import { apiFetch } from "../lib/net";
 import { getGatewayBaseUrl, setGatewayBaseUrl } from "../lib/config";
+import { startSpeechRecognition, stopNativeSpeech } from "../lib/nativeSpeech";
 import { getFrequentMistakes, logMistake } from "../languageMemoryStore";
 import { computeLevel } from "../levelStore";
 import { getAccentTips } from "../accentCoach";
@@ -320,46 +321,33 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
    * On no-speech it just listens again; on a harder error it stops
    * Speaking Mode entirely rather than looping forever. */
   const listenForSpeakingTurn = () => {
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognitionCtor || !navigator.mediaDevices?.getUserMedia) {
-      triggerToast("⚠️ حالت مکالمه صوتی روی این مرورگر/دستگاه پشتیبانی نمی‌شود.");
-      setSpeakingMode(false);
-      return;
-    }
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      activeStreamRef.current = stream;
-      const recognition = new SpeechRecognitionCtor();
-      activeRecognitionRef.current = recognition;
-      recognition.lang = dialect.lang === "english" ? "en-US" : "fa-IR";
-      recognition.interimResults = false;
-      setSpeakingPhase("listening");
-      recognition.onresult = (event: any) => {
-        const heard = event.results?.[0]?.[0]?.transcript?.trim();
-        if (heard) {
+    const handle = startSpeechRecognition({
+      lang: dialect.lang === "english" ? "en-US" : "fa-IR",
+      onSpeechStart: () => setSpeakingPhase("listening"),
+      onResult: (heard) => {
+        if (heard.trim()) {
           setSpeakingPhase("thinking");
-          handleSend(heard, { speaking: true });
+          handleSend(heard.trim(), { speaking: true });
         } else if (speakingModeRef.current) {
           listenForSpeakingTurn();
         }
-      };
-      recognition.onerror = (event: any) => {
-        if (event?.error === "no-speech" && speakingModeRef.current) {
+      },
+      onError: (_message, isNoSpeech) => {
+        if (isNoSpeech && speakingModeRef.current) {
           listenForSpeakingTurn();
         } else if (speakingModeRef.current) {
           triggerToast("⚠️ خطا در تشخیص گفتار — حالت مکالمه صوتی متوقف شد.");
           setSpeakingMode(false);
         }
-      };
-      recognition.onend = () => {
-        stream.getTracks().forEach((t) => t.stop());
-        activeStreamRef.current = null;
-        activeRecognitionRef.current = null;
-      };
-      recognition.start();
-    }).catch(() => {
-      triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد.");
-      setSpeakingMode(false);
+      },
+      onEnd: () => { activeRecognitionRef.current = null; },
     });
+    if (!handle) {
+      triggerToast("⚠️ حالت مکالمه صوتی روی این دستگاه پشتیبانی نمی‌شود.");
+      setSpeakingMode(false);
+      return;
+    }
+    activeRecognitionRef.current = handle;
   };
 
   const toggleSpeakingMode = () => {
@@ -367,6 +355,7 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
       setSpeakingMode(false);
       try { activeRecognitionRef.current?.stop(); } catch {}
       try { (window as any).speechSynthesis?.cancel(); } catch {}
+      stopNativeSpeech();
     } else {
       setSpeakingMode(true);
       speakingModeRef.current = true;
@@ -375,31 +364,18 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
   };
 
   const handleVoiceInput = () => {
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognitionCtor || !navigator.mediaDevices?.getUserMedia) {
-      triggerToast("⚠️ ورودی صوتی در این مرورگر پشتیبانی نمی‌شود؛ متن را تایپ کنید.");
+    const handle = startSpeechRecognition({
+      lang: dialect.lang === "english" ? "en-US" : "fa-IR",
+      onSpeechStart: () => setRecording(true),
+      onResult: (heard) => setInput(heard),
+      onError: (message) => triggerToast(message),
+      onEnd: () => { setRecording(false); activeRecognitionRef.current = null; },
+    });
+    if (!handle) {
+      triggerToast("⚠️ ورودی صوتی روی این دستگاه پشتیبانی نمی‌شود؛ متن را تایپ کنید.");
       return;
     }
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      activeStreamRef.current = stream;
-      const recognition = new SpeechRecognitionCtor();
-      activeRecognitionRef.current = recognition;
-      recognition.lang = dialect.lang === "english" ? "en-US" : "fa-IR";
-      recognition.interimResults = false;
-      setRecording(true);
-      recognition.onresult = (event: any) => {
-        const heard = event.results[0][0].transcript;
-        setInput(heard);
-      };
-      recognition.onerror = () => triggerToast("تشخیص گفتار ناموفق بود.");
-      recognition.onend = () => {
-        setRecording(false);
-        stream.getTracks().forEach((t) => t.stop());
-        activeStreamRef.current = null;
-        activeRecognitionRef.current = null;
-      };
-      recognition.start();
-    }).catch(() => triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد."));
+    activeRecognitionRef.current = handle;
   };
 
   return (

@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { similarityScore, feedbackForScore } from "../speechUtils";
 import { logPracticeAttempt } from "../progressStore";
+import { startSpeechRecognition, speakNative } from "../lib/nativeSpeech";
 
 interface PodcastTabProps {
   playSpeech: (text: string, id: string, langCode?: string, voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string }) => void;
@@ -129,66 +130,58 @@ export default function PodcastTab({
   // event) — a genuine timing measurement from two real browser events,
   // not a simulated/fabricated number.
   const handleStartShadow = () => {
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      triggerToast("⚠️ دسترسی به میکروفون در این مرورگر ممکن نیست.");
-      return;
-    }
     setRecording(true);
     setShadowResult(null);
     const targetLang = /[\u0600-\u06FF]/.test(currentPodcast.lines[activeLineIdx].ar) ? "ar-SA" : "en-US";
+    const lineText = currentPodcast.lines[activeLineIdx].ar;
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      activeStreamRef.current = stream;
-      let nativeStartMs: number | null = null;
-      let userStartMs: number | null = null;
+    let nativeStartMs: number | null = null;
+    let userStartMs: number | null = null;
 
-      // Real playback start timestamp
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(currentPodcast.lines[activeLineIdx].ar);
-      utterance.lang = targetLang;
-      utterance.onstart = () => { nativeStartMs = performance.now(); };
-      window.speechSynthesis.speak(utterance);
-
-      if (!SpeechRecognitionCtor) {
-        // No speech recognition available: still let them record & compare by ear.
-        activeTimeoutRef.current = setTimeout(() => {
-          setRecording(false);
-          stream.getTracks().forEach((t) => t.stop());
-          activeStreamRef.current = null;
-          activeTimeoutRef.current = null;
-          triggerToast("ضبط پایان یافت (تشخیص گفتار در این مرورگر در دسترس نیست).");
-        }, 4000);
-        return;
+    // Bug fix (Android device testing, issues #3/#4): both window.speechSynthesis
+    // and webkitSpeechRecognition are unreliable/absent in Android's embedded
+    // WebView - see lib/nativeSpeech.ts. This mirrors the exact same shadowing
+    // measurement (native line start vs. user speech start), just sourced from
+    // the native TTS/STT plugins on-device instead of the raw Web Speech API.
+    nativeStartMs = performance.now();
+    speakNative(lineText, targetLang).then((handled) => {
+      if (!handled) {
+        // Not native - fall back to the real browser API exactly as before.
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(lineText);
+        utterance.lang = targetLang;
+        utterance.onstart = () => { nativeStartMs = performance.now(); };
+        window.speechSynthesis.speak(utterance);
       }
-      const recognition = new SpeechRecognitionCtor();
-      activeRecognitionRef.current = recognition;
-      recognition.lang = targetLang;
-      recognition.interimResults = false;
-      // Real browser event: fires the moment actual speech is detected.
-      recognition.onspeechstart = () => { userStartMs = performance.now(); };
-      recognition.onresult = (event: any) => {
-        const heard = event.results[0][0].transcript;
-        const score = similarityScore(currentPodcast.lines[activeLineIdx].ar, heard);
+    });
+
+    const handle = startSpeechRecognition({
+      lang: targetLang,
+      onSpeechStart: () => { userStartMs = performance.now(); },
+      onResult: (heard) => {
+        const score = similarityScore(lineText, heard);
         const fb = feedbackForScore(score);
         const delayMs = nativeStartMs !== null && userStartMs !== null
           ? Math.round(userStartMs - nativeStartMs)
           : null;
         setShadowResult({ label: `${fb.label} (${score}%)`, color: fb.color, heard, delayMs });
         logPracticeAttempt(`podcast_${currentPodcast.id}_${activeLineIdx}`, "پادکست", score);
-      };
-      recognition.onerror = () => triggerToast("تشخیص گفتار ناموفق بود؛ دوباره تلاش کنید.");
-      recognition.onend = () => {
-        setRecording(false);
-        stream.getTracks().forEach((t) => t.stop());
-        activeStreamRef.current = null;
-        activeRecognitionRef.current = null;
-      };
-      recognition.start();
-    }).catch(() => {
-      triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد.");
-      setRecording(false);
+      },
+      onError: (message) => triggerToast(message),
+      onEnd: () => { setRecording(false); activeRecognitionRef.current = null; },
     });
+
+    if (!handle) {
+      // No recognition available at all (old browser, no mic API): still let
+      // them record & compare by ear, exactly as the old code did.
+      activeTimeoutRef.current = setTimeout(() => {
+        setRecording(false);
+        activeTimeoutRef.current = null;
+        triggerToast("ضبط پایان یافت (تشخیص گفتار روی این دستگاه در دسترس نیست).");
+      }, 4000);
+      return;
+    }
+    activeRecognitionRef.current = handle;
   };
 
   return (

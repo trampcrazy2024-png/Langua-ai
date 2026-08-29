@@ -4,6 +4,7 @@ import { DIALECT_COMPARISONS, getLangCode } from "../data";
 import { similarityScore, feedbackForScore } from "../speechUtils";
 import { logPracticeAttempt } from "../progressStore";
 import { recordSrsReview } from "../srsStore";
+import { startSpeechRecognition } from "../lib/nativeSpeech";
 
 interface DialectCompareTabProps {
   playSpeech: (text: string, id: string, langCode?: string, voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string }) => void;
@@ -17,37 +18,23 @@ export default function DialectCompareTab({ playSpeech, triggerToast }: DialectC
   const [results, setResults] = useState<Record<string, { label: string; color: string; heard?: string }>>({});
 
   const handlePractice = (entryKey: string, text: string, dialect: string, lang?: "arabic" | "english") => {
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognitionCtor || !navigator.mediaDevices?.getUserMedia) {
-      triggerToast("⚠️ تشخیص گفتار یا میکروفون در این مرورگر پشتیبانی نمی‌شود.");
-      return;
-    }
     setPracticingKey(entryKey);
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        const recognition = new SpeechRecognitionCtor();
-        recognition.lang = getLangCode(dialect, lang);
-        recognition.interimResults = false;
-        recognition.onresult = (event: any) => {
-          const heard = event.results[0][0].transcript;
-          const score = similarityScore(text, heard);
-          const fb = feedbackForScore(score);
-          setResults((prev) => ({ ...prev, [entryKey]: { label: `${fb.label} (${score}%)`, color: fb.color, heard } }));
-          logPracticeAttempt(entryKey, dialect, score);
-          recordSrsReview(entryKey, score);
-        };
-        recognition.onerror = () => triggerToast("تشخیص گفتار ناموفق بود؛ دوباره تلاش کنید.");
-        recognition.onend = () => {
-          setPracticingKey(null);
-          stream.getTracks().forEach((t) => t.stop());
-        };
-        recognition.start();
-      })
-      .catch(() => {
-        triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد.");
-        setPracticingKey(null);
-      });
+    const handle = startSpeechRecognition({
+      lang: getLangCode(dialect, lang),
+      onResult: (heard) => {
+        const score = similarityScore(text, heard);
+        const fb = feedbackForScore(score);
+        setResults((prev) => ({ ...prev, [entryKey]: { label: `${fb.label} (${score}%)`, color: fb.color, heard } }));
+        logPracticeAttempt(entryKey, dialect, score);
+        recordSrsReview(entryKey, score);
+      },
+      onError: (message) => triggerToast(message),
+      onEnd: () => setPracticingKey(null),
+    });
+    if (!handle) {
+      triggerToast("⚠️ تشخیص گفتار روی این دستگاه پشتیبانی نمی‌شود.");
+      setPracticingKey(null);
+    }
   };
 
   return (

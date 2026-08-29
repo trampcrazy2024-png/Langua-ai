@@ -7,6 +7,7 @@ import { recordSrsReview, getDueCardIds } from "../../srsStore";
 import { isOfflineModelDownloaded, startOfflineRecognition } from "../../offlineAsr";
 import { fetchOrGetTodayPhrases, getCachedDailyPhrases, DailyPhraseGroup } from "../../dailyPhrases";
 import { apiFetch } from "../../lib/net";
+import { startSpeechRecognition } from "../../lib/nativeSpeech";
 import { DictionaryPanel } from "./DictionaryPanel";
 import { AITranslatePanel } from "./AITranslatePanel";
 import { AIGeneratorPanel, GeneratedPhrase } from "./AIGeneratorPanel";
@@ -187,25 +188,19 @@ export default function TranslatorTab({
       return;
     }
 
-    const SpeechRecognitionCtor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognitionCtor) { triggerToast("⚠️ مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند؛ فقط پخش صدا در دسترس است."); return; }
     setPracticingId(p.id);
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      activeStreamRef.current = stream;
-      const recognition = new SpeechRecognitionCtor();
-      activeRecognitionRef.current = recognition;
-      recognition.lang = getLangCode(p.dialect, p.lang);
-      recognition.interimResults = false; recognition.maxAlternatives = 1;
-      recognition.onresult = (event: any) => registerResult(event.results[0][0].transcript);
-      recognition.onerror = () => triggerToast("تشخیص گفتار ناموفق بود؛ دوباره تلاش کنید.");
-      recognition.onend = () => {
-        setPracticingId(null);
-        stream.getTracks().forEach((t) => t.stop());
-        activeStreamRef.current = null;
-        activeRecognitionRef.current = null;
-      };
-      recognition.start();
-    }).catch(() => { triggerToast("⚠️ اجازه دسترسی به میکروفون داده نشد."); setPracticingId(null); });
+    const handle = startSpeechRecognition({
+      lang: getLangCode(p.dialect, p.lang),
+      onResult: (heard) => registerResult(heard),
+      onError: (message) => triggerToast(message),
+      onEnd: () => { setPracticingId(null); activeRecognitionRef.current = null; },
+    });
+    if (!handle) {
+      triggerToast("⚠️ این دستگاه از تشخیص گفتار پشتیبانی نمی‌کند؛ فقط پخش صدا در دسترس است.");
+      setPracticingId(null);
+      return;
+    }
+    activeRecognitionRef.current = handle;
   };
 
   const handleCreateCustom = (e: React.FormEvent) => {
