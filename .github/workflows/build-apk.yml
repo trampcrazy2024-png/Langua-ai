@@ -1,4 +1,4 @@
-name: Build Android VPN APK
+name: Build Android APK
 
 on:
   push:
@@ -7,12 +7,17 @@ on:
 
 jobs:
   build:
-    name: Build & Release APK
+    name: Build & Upload Debug APK (Zipped)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -28,11 +33,21 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Debug APK
-        run: gradle assembleDebug || gradle assemble
+      - name: Install npm dependencies
+        run: npm install
 
-      - name: Upload Debug APK Artifact
+      # ساخت وب‌اپ و سینک کردن آن با اندروید (ضروری)
+      - name: Build web app and sync into the Android project
+        run: npm run android:sync
+
+      # اجرای بیلد داخل پوشه‌ی اندروید
+      - name: Build Debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      # آپلود خروجی به صورت یک پوشه‌ی زیپ‌شده
+      - name: Upload Debug APK Artifact (Zipped)
         uses: actions/upload-artifact@v4
         with:
-          name: android-vpn-debug-apk
-          path: '**/build/outputs/apk/**/*.apk'
+          name: lingua-assistant-debug-apk
+          path: android/app/build/outputs/apk/
