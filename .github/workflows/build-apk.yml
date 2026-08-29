@@ -19,10 +19,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Set up JDK 17
+      # تغییر مهم: استفاده از JDK 21 برای سازگاری با Capacitor
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle 8.5
@@ -45,7 +46,7 @@ jobs:
         working-directory: android
         run: ./gradlew assembleDebug
 
-      # آپلود خروجی به صورت یک پوشه‌ی زیپ‌شده
+      # آپلود خروجی به صورت یک پوشه‌ی زیپ‌شده (Zip)
       - name: Upload Debug APK Artifact (Zipped)
         uses: actions/upload-artifact@v4
         with:
