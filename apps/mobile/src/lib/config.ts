@@ -70,3 +70,17 @@ export function setGeminiApiKey(value: string): void {
     else localStorage.removeItem(GEMINI_KEY_STORAGE);
   } catch {}
 }
+
+
+const OLLAMA_URL_STORAGE_KEY = "travelapp_ollama_base_url";
+
+export function getOllamaBaseUrl(): string {
+  try { return localStorage.getItem(OLLAMA_URL_STORAGE_KEY) || ""; } catch { return ""; }
+}
+export function setOllamaBaseUrl(value: string): void {
+  try {
+    const v = value.trim().replace(/\/$/, "");
+    if (v) localStorage.setItem(OLLAMA_URL_STORAGE_KEY, v);
+    else localStorage.removeItem(OLLAMA_URL_STORAGE_KEY);
+  } catch {}
+}

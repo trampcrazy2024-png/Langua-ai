@@ -31,8 +31,14 @@
 // device/emulator to run it on - please test and share `adb logcat`
 // output if recognition still fails after this.
 
-import { Capacitor } from "@capacitor/core";
+import { Capacitor, registerPlugin } from "@capacitor/core";
 import { SpeechRecognition as NativeSTT } from "@capacitor-community/speech-recognition";
+interface NativeTTSPlugin {
+  speak(options: { text: string; lang: string; rate?: number; pitch?: number }): Promise<{ ok: boolean }>;
+  stop(): Promise<{ ok: boolean }>;
+}
+
+const NativeTTS = registerPlugin<NativeTTSPlugin>("NativeTTS");
 
 export interface RecognitionHandle {
   stop(): void;
@@ -163,7 +169,7 @@ function startWeb(opts: RecognitionOptions): RecognitionHandle | null {
 // in Android's embedded WebView for the same reason SpeechRecognition is -
 // it's a real, well-known Chromium-WebView-vs-Chrome-app gap, not a bug in
 // how the app picked a voice. Routes through Android's native
-// TextToSpeech engine via @capacitor-community/text-to-speech instead.
+// Android TextToSpeech is exposed through the small built-in NativeTTS Capacitor plugin.
 //
 // Returns true if the native engine handled it (caller should NOT also
 // fall back to window.speechSynthesis), false if this isn't a native
@@ -194,6 +200,6 @@ export async function speakNative(
 
 export function stopNativeSpeech(): void {
   if (Capacitor.isNativePlatform()) {
-
+    NativeTTS.stop().catch(() => {});
   }
 }

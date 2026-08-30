@@ -22,7 +22,7 @@
 
 import LocalAI from "../services/localAI";
 import { localAIChat } from "./localAIChat";
-import { apiUrl, getOpenRouterApiKey, getGeminiApiKey } from "./config";
+import { apiUrl, getOpenRouterApiKey, getGeminiApiKey, getOllamaBaseUrl } from "./config";
 
 export type AiProviderKey = "auto" | "gateway" | "native" | "cloud";
 
@@ -94,50 +94,129 @@ function buildFlatPrompt(payload: ChatRequest): string {
 }
 
 
-async function freeCloudChat(payload: ChatRequest): Promise<string> {
-  const prompt = buildFlatPrompt(payload);
-  const openRouterKey = getOpenRouterApiKey();
-  const geminiKey = getGeminiApiKey();
+const CLOUD_TIMEOUT_MS = 25_000;
+
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = CLOUD_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try { return await fetch(url, { ...init, signal: controller.signal }); }
+  finally { clearTimeout(timer); }
+}
+
+async function openRouterText(prompt: string, maxTokens = 900): Promise<string> {
+  const key = getOpenRouterApiKey();
+  if (!key) throw new Error("OPENROUTER_KEY_MISSING");
+  const res = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+      "HTTP-Referer": "https://github.com/trampcrazy2024-png/Langua-ai",
+      "X-OpenRouter-Title": "Langua AI",
+    },
+    body: JSON.stringify({
+      model: "openrouter/free",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: maxTokens,
+    }),
+  });
+  const data: any = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`OpenRouter HTTP ${res.status}: ${data?.error?.message ?? "request failed"}`);
+  const text = data?.choices?.[0]?.message?.content;
+  if (typeof text !== "string" || !text.trim()) throw new Error("OpenRouter returned an empty response");
+  return text.trim();
+}
+
+async function geminiText(prompt: string, maxTokens = 900): Promise<string> {
+  const key = getGeminiApiKey();
+  if (!key) throw new Error("GEMINI_KEY_MISSING");
+  const model = "gemini-2.5-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  const res = await fetchWithTimeout(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: maxTokens, temperature: 0.7 },
+    }),
+  });
+  const data: any = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Gemini HTTP ${res.status}: ${data?.error?.message ?? "request failed"}`);
+  const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text || "").join("").trim();
+  if (!text) throw new Error("Gemini returned an empty response");
+  return text;
+}
+
+async function freeCloudText(prompt: string, maxTokens = 900): Promise<string> {
   const errors: string[] = [];
-
-  if (openRouterKey) {
-    try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openRouterKey}`,
-          "HTTP-Referer": "https://github.com/trampcrazy2024-png/Langua-ai",
-          "X-Title": "Langua AI",
-        },
-        body: JSON.stringify({ model: "openrouter/free", messages: [{ role: "user", content: prompt }], temperature: 0.7 }),
-      });
-      if (!res.ok) throw new Error(`OpenRouter HTTP ${res.status}`);
-      const data = await res.json();
-      const text = data?.choices?.[0]?.message?.content;
-      if (typeof text === "string" && text.trim()) return text.trim();
-      throw new Error("OpenRouter returned an empty response");
-    } catch (e) { errors.push(String(e)); }
+  if (getOpenRouterApiKey()) {
+    try { return await openRouterText(prompt, maxTokens); }
+    catch (e) { errors.push(String(e)); }
   }
-
-  if (geminiKey) {
-    try {
-      const model = "gemini-3.7-flash";
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(geminiKey)}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] }),
-      });
-      if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text || "").join("").trim();
-      if (text) return text;
-      throw new Error("Gemini returned an empty response");
-    } catch (e) { errors.push(String(e)); }
+  if (getGeminiApiKey()) {
+    try { return await geminiText(prompt, maxTokens); }
+    catch (e) { errors.push(String(e)); }
   }
+  if (!getOpenRouterApiKey() && !getGeminiApiKey()) {
+    throw new Error("برای مسیر اینترنتی مستقیم، کلید OpenRouter یا Gemini را در تنظیمات وارد کنید.");
+  }
+  throw new Error(`سرویس اینترنتی در دسترس نبود؛ مسیر بعدی را امتحان کنید. ${errors.join(" | ")}`);
+}
 
-  throw new Error(errors.length ? `سرویس‌های رایگان اینترنتی در دسترس نبودند: ${errors.join(" | ")}` : "برای مسیر اینترنتی رایگان، کلید OpenRouter یا Gemini را در تنظیمات وارد کنید.");
+async function ollamaText(prompt: string, maxTokens = 900): Promise<string> {
+  const base = getOllamaBaseUrl();
+  if (!base) throw new Error("OLLAMA_NOT_CONFIGURED");
+  const model = localStorage.getItem("travelapp_ollama_model") || "qwen3:4b";
+  const res = await fetchWithTimeout(`${base.replace(/\/$/, "")}/v1/chat/completions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.7, max_tokens: maxTokens }),
+  }, 20_000);
+  const data: any = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Ollama HTTP ${res.status}`);
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Ollama returned an empty response");
+  return String(text).trim();
+}
+
+async function freeCloudChat(payload: ChatRequest): Promise<string> {
+  return freeCloudText(buildFlatPrompt(payload));
+}
+
+function buildScenarioPrompt(payload: { message: string; history: ChatTurn[]; dialect: string; personaName: string; personaTrait: string; personaOccupation?: string; scenario: any }): string {
+  const transcript = payload.history.map((h) => `${h.sender === "user" ? "Learner" : payload.personaName || "Companion"}: ${h.text}`).join("\n");
+  return [
+    `You are ${payload.personaName || "a travel companion"}, a language conversation partner for a learner of ${payload.dialect || "the target dialect"}.`,
+    payload.personaTrait ? `Persona trait: ${payload.personaTrait}.` : "",
+    payload.personaOccupation ? `Your occupation: ${payload.personaOccupation}.` : "",
+    payload.scenario ? `Scenario: ${payload.scenario.titleFa || ""} — ${payload.scenario.location || ""}. Goal: ${payload.scenario.objectiveFa || ""}.` : "",
+    "Reply naturally in the target dialect/language as the character.",
+    "After your natural reply, on separate lines provide: فارسی: a concise Persian meaning. اصلاح: only if needed, otherwise اصلاح: بدون اصلاح.",
+    "If the scenario objective was fully achieved, append [OBJECTIVE_COMPLETE] at the very end.",
+    transcript ? `Conversation so far:\n${transcript}` : "",
+    `Learner: ${payload.message}`,
+    `${payload.personaName || "Companion"}:`,
+  ].filter(Boolean).join("\n");
+}
+
+export async function internetScenarioChat(payload: { message: string; history: ChatTurn[]; dialect: string; personaName: string; personaTrait: string; personaOccupation?: string; scenario: any }): Promise<string> {
+  return freeCloudText(buildScenarioPrompt(payload));
+}
+
+export async function internetScenarioReport(payload: { transcript: ChatTurn[]; scenarioTitle: string; objectiveFa: string; dialect: string }): Promise<any> {
+  const transcriptText = payload.transcript.map((t) => `${t.sender === "user" ? "Learner" : "Companion"}: ${t.text}`).join("\n");
+  const prompt = [
+    `Analyze this ${payload.dialect || "Arabic"} learning conversation. Scenario: ${payload.scenarioTitle || ""}.`,
+    `Objective: ${payload.objectiveFa || ""}.`,
+    `Transcript:\n${transcriptText}`,
+    'Return STRICT JSON with exactly this shape: {"objectiveAchieved": boolean, "summaryFa": "string", "strengthsFa": ["string"], "improvementsFa": ["string"], "newVocabulary": [{"phrase": "string", "meaningFa": "string"}]}',
+    "All prose in Persian. newVocabulary: at most 5 items.",
+  ].join("\n");
+  const raw = await freeCloudText(prompt, 1200);
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("گزارش سناریو از سرویس اینترنتی قابل پردازش نبود.");
+  try { return JSON.parse(match[0]); } catch { throw new Error("گزارش سناریو JSON معتبر برنگرداند."); }
 }
 
 export const cloudProvider: AiProvider = {
@@ -197,7 +276,7 @@ export const nativeProvider: AiProvider = {
     if (!health.modelLoaded) {
       throw new Error("هنوز مدلی روی دستگاه بارگذاری نشده — یک فایل مدل GGUF انتخاب و بارگذاری کنید، یا به «گیت‌وی» تغییر دهید.");
     }
-    const result = await withTimeout(
+    const result: any = await withTimeout(
       LocalAI.chat({ message: buildFlatPrompt(payload) }),
       NATIVE_GENERATION_TIMEOUT_MS,
       "مدل محلی روی این گوشی بیش از حد انتظار طول کشید (ممکن است دستگاه برای این مدل ضعیف باشد) — به «گیت‌وی» تغییر دهید یا یک مدل کوچکتر امتحان کنید.",
@@ -229,6 +308,9 @@ export const autoProvider: AiProvider = {
         console.warn("[ai-providers] native attempt failed, falling back to gateway:", e);
         // fall through to gateway below
       }
+    }
+    try { return await ollamaText(buildFlatPrompt(payload)); } catch (ollamaError) {
+      console.warn("[ai-providers] direct Ollama unavailable, falling back to internet cloud:", ollamaError);
     }
     try { return await cloudProvider.chat(payload); } catch (cloudError) {
       console.warn("[ai-providers] free cloud failed, falling back to gateway:", cloudError);
