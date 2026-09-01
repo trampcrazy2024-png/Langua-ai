@@ -295,7 +295,32 @@ public class LocalAIPlugin extends Plugin {
          */
         aiExecutor.execute(() -> {
             try {
-                boolean loaded = nativeLoadModel(path);
+                File requested = new File(path);
+
+                if (!requested.isAbsolute()) {
+                    requested = new File(
+                            new File(getContext().getFilesDir(), "models"),
+                            path.replaceFirst("^models[\\\\/]", "")
+                    );
+                }
+
+                File modelFile = requested.getCanonicalFile();
+
+                if (!modelFile.exists()) {
+                    modelLoaded = false;
+                    loadedModelPath = null;
+                    call.reject("Model file not found: " + modelFile.getAbsolutePath());
+                    return;
+                }
+
+                if (!modelFile.isFile() || !modelFile.canRead()) {
+                    modelLoaded = false;
+                    loadedModelPath = null;
+                    call.reject("Model file is not readable: " + modelFile.getAbsolutePath());
+                    return;
+                }
+
+                boolean loaded = nativeLoadModel(modelFile.getAbsolutePath());
 
                 if (!loaded) {
                     modelLoaded = false;
@@ -305,7 +330,7 @@ public class LocalAIPlugin extends Plugin {
                 }
 
                 modelLoaded = true;
-                loadedModelPath = path;
+                loadedModelPath = modelFile.getAbsolutePath();
 
                 JSObject result = new JSObject();
                 result.put("ok", true);

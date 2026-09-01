@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { ChatMessage } from "../types";
 import { SCENARIOS, PERSONAS, getLangCode, ScenarioDef, Persona } from "../data";
-import { apiFetch } from "../lib/net";
+import { internetScenarioChat, internetScenarioReport } from "../lib/aiProviders";
 import { startSpeechRecognition } from "../lib/nativeSpeech";
 
 interface ScenarioTabProps {
@@ -69,9 +69,7 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
     try {
       // Bug fix: was a raw fetch("/api/chat", ...) with a hardcoded
       // same-origin path - see the note in OcrTab.tsx.
-      const data = await apiFetch<any>("/api/chat", {
-        method: "POST",
-        body: {
+      const response = await internetScenarioChat({
           message: "(شروع سناریو — لطفاً به‌عنوان شخصیت نقش، اولین جمله را بگویید)",
           dialect: selectedPersona.id,
           personaName: selectedPersona.personaName,
@@ -83,9 +81,8 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
             objectiveFa: selectedScenario.objectiveFa
           },
           history: []
-        }
       });
-      const { text, done } = stripCompletionMarker(data.response || "");
+      const { text, done } = stripCompletionMarker(response || "");
       const botMsg: ChatMessage = {
         id: `b_${Date.now()}`,
         sender: "companion",
@@ -117,9 +114,7 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
     try {
       // Bug fix: was a raw fetch("/api/chat", ...) with a hardcoded
       // same-origin path.
-      const data = await apiFetch<any>("/api/chat", {
-        method: "POST",
-        body: {
+      const response = await internetScenarioChat({
           message: text,
           dialect: selectedPersona.id,
           personaName: selectedPersona.personaName,
@@ -131,9 +126,8 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
             objectiveFa: selectedScenario.objectiveFa
           },
           history: newMessages.map((m) => ({ sender: m.sender, text: m.text }))
-        }
       });
-      const { text: replyRaw, done } = stripCompletionMarker(data.response || "");
+      const { text: replyRaw, done } = stripCompletionMarker(response || "");
       const botMsg: ChatMessage = {
         id: `b_${Date.now()}`,
         sender: "companion",
@@ -178,14 +172,11 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
     try {
       // Bug fix: was a raw fetch("/api/scenario-report", ...) with a
       // hardcoded same-origin path.
-      const data = await apiFetch<ScenarioReport>("/api/scenario-report", {
-        method: "POST",
-        body: {
-          transcript: messages.map((m) => ({ sender: m.sender, text: m.text })),
-          scenarioTitle: selectedScenario.titleFa,
-          objectiveFa: selectedScenario.objectiveFa,
-          dialect: selectedPersona.id
-        }
+      const data = await internetScenarioReport({
+        transcript: messages.map((m) => ({ sender: m.sender, text: m.text })),
+        scenarioTitle: selectedScenario.titleFa,
+        objectiveFa: selectedScenario.objectiveFa,
+        dialect: selectedPersona.id
       });
       setReport(data);
     } catch {

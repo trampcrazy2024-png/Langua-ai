@@ -4,7 +4,7 @@ import { ChatMessage } from "../types";
 import { getLangCode, PERSONAS } from "../data";
 import { getPreferredProviderKey, setPreferredProviderKey, listProviders, gatewayProvider, getNativeStatus, pickAndLoadNativeModel, unloadNativeModel, streamGatewayChat, type AiProviderKey, type NativeStatus } from "../lib/aiProviders";
 import { apiFetch } from "../lib/net";
-import { getGatewayBaseUrl, setGatewayBaseUrl, getOpenRouterApiKey, setOpenRouterApiKey, getGeminiApiKey, setGeminiApiKey } from "../lib/config";
+import { getGatewayBaseUrl, setGatewayBaseUrl, getOpenRouterApiKey, setOpenRouterApiKey, getGeminiApiKey, setGeminiApiKey, getOllamaBaseUrl, setOllamaBaseUrl } from "../lib/config";
 import { startSpeechRecognition, stopNativeSpeech } from "../lib/nativeSpeech";
 import { getFrequentMistakes, logMistake } from "../languageMemoryStore";
 import { computeLevel } from "../levelStore";
@@ -46,6 +46,8 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
   // user set it at runtime instead - see lib/config.ts.
   const [gatewayUrlInput, setGatewayUrlInput] = useState<string>(() => getGatewayBaseUrl());
   const [gatewayUrlSaved, setGatewayUrlSaved] = useState(false);
+  const [ollamaUrlInput, setOllamaUrlInput] = useState<string>(() => getOllamaBaseUrl());
+  const [ollamaUrlSaved, setOllamaUrlSaved] = useState(false);
   const [openRouterKey, setOpenRouterKey] = useState(() => getOpenRouterApiKey());
   const [geminiKey, setGeminiKey] = useState(() => getGeminiApiKey());
   const [cloudKeysSaved, setCloudKeysSaved] = useState(false);
@@ -451,6 +453,17 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
             <button onClick={() => { setOpenRouterApiKey(openRouterKey); setGeminiApiKey(geminiKey); setCloudKeysSaved(true); triggerToast("✅ کلیدهای اینترنتی ذخیره شد."); }} className="w-full bg-[#14B8A6] text-black font-black px-3 py-1.5 rounded-lg text-[10px]">
               {cloudKeysSaved ? "ذخیره شد ✓" : "ذخیره کلیدها"}
             </button>
+          </div>
+        )}
+        {providerKey === "auto" && (
+          <div className="bg-[#090D16] border border-[#1E293B] rounded-xl p-2.5 space-y-1.5">
+            <span className="text-[10px] text-[#94A3B8] block">
+              Ollama اختیاری: اگر Ollama روی گوشی یا یک آدرس قابل‌دسترسی در شبکه دارید، قبل از OpenRouter امتحان می‌شود. خالی بگذارید تا مستقیم به اینترنت رایگان برویم.
+            </span>
+            <div className="flex gap-1.5">
+              <input type="text" dir="ltr" value={ollamaUrlInput} onChange={(e) => { setOllamaUrlInput(e.target.value); setOllamaUrlSaved(false); }} placeholder="http://127.0.0.1:11434" className="flex-1 bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
+              <button onClick={() => { setOllamaBaseUrl(ollamaUrlInput); setOllamaUrlSaved(true); triggerToast("✅ آدرس Ollama ذخیره شد."); }} className="shrink-0 bg-[#14B8A6] text-black font-black px-3 py-1.5 rounded-lg text-[10px]">{ollamaUrlSaved ? "ذخیره شد ✓" : "ذخیره"}</button>
+            </div>
           </div>
         )}
         {(providerKey === "gateway" || providerKey === "auto") && (

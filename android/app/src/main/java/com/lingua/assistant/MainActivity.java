@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 
+import androidx.activity.OnBackPressedCallback;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
 import com.lingua.assistant.plugins.LocalAIPlugin;
+import com.lingua.assistant.plugins.NativeTTSPlugin;
 
 /*
  * Bug fix (Android device testing, issue #4): the mic/record button
@@ -36,9 +39,36 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(LocalAIPlugin.class);
+        registerPlugin(NativeTTSPlugin.class);
         super.onCreate(savedInstanceState);
 
         getBridge().getWebView().setWebChromeClient(new BridgeWebChromeClientWithMic(getBridge()));
+
+        getOnBackPressedDispatcher().addCallback(this,
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        if (getBridge() == null || getBridge().getWebView() == null) {
+                            finish();
+                            return;
+                        }
+
+                        android.webkit.WebView webView = getBridge().getWebView();
+
+                        if (webView.canGoBack()) {
+                            webView.goBack();
+                            return;
+                        }
+
+                        /*
+                         * Let the WebView/app consume the first back press.
+                         * Only finish when there is genuinely no application
+                         * history to return to.
+                         */
+                        setEnabled(false);
+                        getOnBackPressedDispatcher().onBackPressed();
+                    }
+                });
     }
 
     /**

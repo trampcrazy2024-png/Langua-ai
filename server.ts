@@ -508,7 +508,7 @@ export const server = createServer(async (req, res) => {
     return;
   }
 
-  const handler = routes[url];
+  const handler = url ? routes[url] : undefined;
   if (!handler) {
     send(res, 404, { error: "Not found" });
     return;
