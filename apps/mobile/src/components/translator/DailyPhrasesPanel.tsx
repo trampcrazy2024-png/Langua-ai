@@ -1,4 +1,3 @@
-import React from "react";
 import { Sparkles, RefreshCw, ShieldAlert, Mic, Volume2 } from "lucide-react";
 import { Phrase } from "../../types";
 

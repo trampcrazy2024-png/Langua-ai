@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { 
   Play, Pause, Volume2, Mic, Sparkles, BookOpen, Clock, 
-  ChevronRight, Award, Info, RefreshCw, Star, BarChart2
+  Info
 } from "lucide-react";
 import { similarityScore, feedbackForScore } from "../speechUtils";
 import { logPracticeAttempt } from "../progressStore";
@@ -120,7 +120,7 @@ export default function PodcastTab({
     }
   ];
 
-  const currentPodcast = podcasts.find(p => p.id === activePodcast) || podcasts[0];
+  const currentPodcast = podcasts.find(p => p.id === activePodcast) ?? podcasts[0]!;
 
   // Real shadowing: plays the native line via the browser's own speech
   // synthesis (so we get a real 'onstart' timestamp), records the user at
@@ -132,8 +132,8 @@ export default function PodcastTab({
   const handleStartShadow = () => {
     setRecording(true);
     setShadowResult(null);
-    const targetLang = /[\u0600-\u06FF]/.test(currentPodcast.lines[activeLineIdx].ar) ? "ar-SA" : "en-US";
-    const lineText = currentPodcast.lines[activeLineIdx].ar;
+    const targetLang = /[\u0600-\u06FF]/.test(currentPodcast.lines[activeLineIdx]!.ar) ? "ar-SA" : "en-US";
+    const lineText = currentPodcast.lines[activeLineIdx]!.ar;
 
     let nativeStartMs: number | null = null;
     let userStartMs: number | null = null;
@@ -298,7 +298,7 @@ export default function PodcastTab({
               <span>روی یک خط از گفتگو بالا بزنید تا هدف تمرین شود</span>
             </div>
           </div>
-          <p className="text-[11px] text-[#94A3B8] leading-relaxed">خط انتخاب‌شده: «{currentPodcast.lines[activeLineIdx].ar}» — پخش کنید، بعد میکروفون را بزنید و همان جمله را بگویید. صدای شما واقعاً ضبط و با متن هدف مقایسه می‌شود.</p>
+          <p className="text-[11px] text-[#94A3B8] leading-relaxed">خط انتخاب‌شده: «{currentPodcast.lines[activeLineIdx]!.ar}» — پخش کنید، بعد میکروفون را بزنید و همان جمله را بگویید. صدای شما واقعاً ضبط و با متن هدف مقایسه می‌شود.</p>
           
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-[#141C2E] p-4 rounded-xl border border-[#1E293B]/70">
             <div className="flex items-center gap-3 w-full sm:w-auto">

@@ -49,6 +49,8 @@ export function apiUrl(path: string): string {
 
 const OPENROUTER_KEY_STORAGE = "travelapp_openrouter_api_key";
 const GEMINI_KEY_STORAGE = "travelapp_gemini_api_key";
+const DEEPSEEK_KEY_STORAGE = "travelapp_deepseek_api_key";
+const GROQ_KEY_STORAGE = "travelapp_groq_api_key";
 
 export function getOpenRouterApiKey(): string {
   try { return localStorage.getItem(OPENROUTER_KEY_STORAGE) || ""; } catch { return ""; }
@@ -68,6 +70,32 @@ export function setGeminiApiKey(value: string): void {
     const v = value.trim();
     if (v) localStorage.setItem(GEMINI_KEY_STORAGE, v);
     else localStorage.removeItem(GEMINI_KEY_STORAGE);
+  } catch {}
+}
+// DeepSeek and Groq: both offer an OpenAI-compatible /chat/completions
+// endpoint with a free tier (Groq's is free outright; DeepSeek's chat
+// model is very low-cost with a free trial credit) - added as extra
+// fallback rungs in the same "auto" chain as OpenRouter/Gemini, so a
+// learner has more than two providers standing between them and "no AI
+// responded".
+export function getDeepSeekApiKey(): string {
+  try { return localStorage.getItem(DEEPSEEK_KEY_STORAGE) || ""; } catch { return ""; }
+}
+export function setDeepSeekApiKey(value: string): void {
+  try {
+    const v = value.trim();
+    if (v) localStorage.setItem(DEEPSEEK_KEY_STORAGE, v);
+    else localStorage.removeItem(DEEPSEEK_KEY_STORAGE);
+  } catch {}
+}
+export function getGroqApiKey(): string {
+  try { return localStorage.getItem(GROQ_KEY_STORAGE) || ""; } catch { return ""; }
+}
+export function setGroqApiKey(value: string): void {
+  try {
+    const v = value.trim();
+    if (v) localStorage.setItem(GROQ_KEY_STORAGE, v);
+    else localStorage.removeItem(GROQ_KEY_STORAGE);
   } catch {}
 }
 

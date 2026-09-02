@@ -96,11 +96,20 @@ export function recordSrsReview(phraseId: string, score: number): SrsCard {
 
 // Phrase IDs that are due for review today (or overdue) — only includes
 // phrases that have been practiced at least once before.
+// A card is "due" if its schedule says today-or-earlier, OR it was
+// reviewed today - so today's practiced-today items and today's
+// overdue items both show up in the same "today" list (a phrase
+// scheduled for tomorrow doesn't vanish from view the moment you've
+// just practiced it today).
+function isDue(c: SrsCard, today: string): boolean {
+  return c.nextReviewDate <= today || c.lastReviewDate === today;
+}
+
 export function getDueCardIds(): string[] {
   const cards = getAllSrsCards();
   const today = todayStr();
   return Object.values(cards)
-    .filter((c) => c.nextReviewDate <= today)
+    .filter((c) => isDue(c, today))
     .sort((a, b) => a.nextReviewDate.localeCompare(b.nextReviewDate))
     .map((c) => c.phraseId);
 }
@@ -110,7 +119,7 @@ export function getSrsStats(): { totalCards: number; dueToday: number; matureCar
   const today = todayStr();
   return {
     totalCards: cards.length,
-    dueToday: cards.filter((c) => c.nextReviewDate <= today).length,
+    dueToday: cards.filter((c) => isDue(c, today)).length,
     matureCards: cards.filter((c) => c.interval >= 21).length
   };
 }

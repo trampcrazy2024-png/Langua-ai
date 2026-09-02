@@ -7,6 +7,7 @@ import { ChatMessage } from "../types";
 import { SCENARIOS, PERSONAS, getLangCode, ScenarioDef, Persona } from "../data";
 import { internetScenarioChat, internetScenarioReport } from "../lib/aiProviders";
 import { startSpeechRecognition } from "../lib/nativeSpeech";
+import { logEvent } from "../lib/debugLog";
 
 interface ScenarioTabProps {
   playSpeech: (text: string, id: string, langCode?: string, voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string }) => void;
@@ -32,7 +33,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: ScenarioTabProps) {
   const [selectedScenario, setSelectedScenario] = useState<ScenarioDef | null>(null);
-  const [selectedPersona, setSelectedPersona] = useState<Persona>(PERSONAS[0]);
+  const [selectedPersona, setSelectedPersona] = useState<Persona>(PERSONAS[0]!);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -92,8 +93,9 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
       };
       setMessages([botMsg]);
       if (done) triggerToast("🎉 هدف سناریو محقق شد! می‌توانید گزارش پایانی را بگیرید.");
-    } catch {
-      triggerToast("⚠️ شروع سناریو ناموفق بود.");
+    } catch (err: any) {
+      logEvent("error", "Scenario:start", err?.message || String(err));
+      triggerToast(`⚠️ شروع سناریو ناموفق بود: ${err?.message || "خطای نامشخص"}`);
     } finally {
       setLoading(false);
     }
@@ -141,8 +143,9 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
         scrollTimeoutRef.current = null;
       }, 100);
-    } catch {
-      triggerToast("⚠️ ارسال پیام ناموفق بود.");
+    } catch (err: any) {
+      logEvent("error", "Scenario:send", err?.message || String(err));
+      triggerToast(`⚠️ ارسال پیام ناموفق بود: ${err?.message || "خطای نامشخص"}`);
     } finally {
       setLoading(false);
     }
@@ -179,8 +182,9 @@ export default function ScenarioTab({ playSpeech, triggerToast, offlineMode }: S
         dialect: selectedPersona.id
       });
       setReport(data);
-    } catch {
-      triggerToast("⚠️ ساخت گزارش ناموفق بود؛ اتصال اینترنت را بررسی کنید.");
+    } catch (err: any) {
+      logEvent("error", "Scenario:report", err?.message || String(err));
+      triggerToast(`⚠️ ساخت گزارش ناموفق بود: ${err?.message || "اتصال اینترنت را بررسی کنید."}`);
     } finally {
       setReportLoading(false);
     }

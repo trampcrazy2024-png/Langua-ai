@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { 
-  Camera, UploadCloud, Volume2, Sparkles, AlertCircle, 
-  RefreshCw, Info, CheckCircle, ShieldAlert, FileText, ArrowRight
+  Camera, UploadCloud, Volume2, 
+  RefreshCw, Info, CheckCircle, ShieldAlert
 } from "lucide-react";
 import { apiFetch } from "../lib/net";
 

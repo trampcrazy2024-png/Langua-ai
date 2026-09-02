@@ -69,12 +69,13 @@ export function computeStats(): PracticeStats {
 
   const byDialect: Record<string, { attempts: number; avgScore: number }> = {};
   for (const entry of log) {
-    if (!byDialect[entry.dialect]) byDialect[entry.dialect] = { attempts: 0, avgScore: 0 };
-    byDialect[entry.dialect].attempts += 1;
+    const key = entry.dialect;
+    if (!byDialect[key]) byDialect[key] = { attempts: 0, avgScore: 0 };
+    byDialect[key]!.attempts += 1;
   }
   for (const dialect of Object.keys(byDialect)) {
     const entries = log.filter((e) => e.dialect === dialect);
-    byDialect[dialect].avgScore = Math.round(entries.reduce((s, e) => s + e.score, 0) / entries.length);
+    byDialect[dialect]!.avgScore = Math.round(entries.reduce((s, e) => s + e.score, 0) / entries.length);
   }
 
   // Streak: consecutive calendar days (ending today or yesterday) with at
@@ -83,8 +84,8 @@ export function computeStats(): PracticeStats {
   let bestStreak = 1;
   let running = 1;
   for (let i = 1; i < practiceDates.length; i++) {
-    const prev = new Date(practiceDates[i - 1]);
-    const curr = new Date(practiceDates[i]);
+    const prev = new Date(practiceDates[i - 1]!);
+    const curr = new Date(practiceDates[i]!);
     const diffDays = Math.round((curr.getTime() - prev.getTime()) / 86400000);
     if (diffDays === 1) {
       running += 1;

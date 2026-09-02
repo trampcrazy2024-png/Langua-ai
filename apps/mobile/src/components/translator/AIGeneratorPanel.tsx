@@ -1,4 +1,3 @@
-import React from "react";
 import { Sparkles, RefreshCw, ShieldAlert, Info, Volume2 } from "lucide-react";
 
 export interface GeneratedPhrase { arabic: string; arabicPhonetic: string; arabicPhoneticLatin: string; farsi: string; english: string; audioTips?: string }

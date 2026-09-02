@@ -295,32 +295,7 @@ public class LocalAIPlugin extends Plugin {
          */
         aiExecutor.execute(() -> {
             try {
-                File requested = new File(path);
-
-                if (!requested.isAbsolute()) {
-                    requested = new File(
-                            new File(getContext().getFilesDir(), "models"),
-                            path.replaceFirst("^models[\\\\/]", "")
-                    );
-                }
-
-                File modelFile = requested.getCanonicalFile();
-
-                if (!modelFile.exists()) {
-                    modelLoaded = false;
-                    loadedModelPath = null;
-                    call.reject("Model file not found: " + modelFile.getAbsolutePath());
-                    return;
-                }
-
-                if (!modelFile.isFile() || !modelFile.canRead()) {
-                    modelLoaded = false;
-                    loadedModelPath = null;
-                    call.reject("Model file is not readable: " + modelFile.getAbsolutePath());
-                    return;
-                }
-
-                boolean loaded = nativeLoadModel(modelFile.getAbsolutePath());
+                boolean loaded = nativeLoadModel(path);
 
                 if (!loaded) {
                     modelLoaded = false;
@@ -330,7 +305,7 @@ public class LocalAIPlugin extends Plugin {
                 }
 
                 modelLoaded = true;
-                loadedModelPath = modelFile.getAbsolutePath();
+                loadedModelPath = path;
 
                 JSObject result = new JSObject();
                 result.put("ok", true);
@@ -436,8 +411,9 @@ public class LocalAIPlugin extends Plugin {
      * Phase 8-D: streaming variant of chat(). Fires a "generationToken"
      * event (batched, see onNativeToken) as pieces are produced, then
      * a "generationStatus" event + the resolved/rejected promise once
-     * generation ends - covering the START/TOKEN/DONE/ERROR/CANCELLED
-     * lifecycle from the review, not just a silent Promise completion.
+     * generation ends - covering the START, TOKEN (repeated), DONE,
+     * ERROR, CANCELLED lifecycle from the review, not just a silent
+     * Promise completion.
      */
     @PluginMethod
     public void streamChat(PluginCall call) {

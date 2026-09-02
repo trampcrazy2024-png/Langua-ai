@@ -5,7 +5,7 @@ const GENDER_MAP: Record<string, { label: string; color: string }> = {
   female_listener: { label: "خطاب به خانم", color: "#EC4899" },
 };
 
-export function GenderBadge({ gender }: { gender?: string }) {
+export function GenderBadge({ gender }: { gender?: string | undefined }) {
   if (!gender || gender === "unisex") return null;
   const info = GENDER_MAP[gender];
   if (!info) return null;

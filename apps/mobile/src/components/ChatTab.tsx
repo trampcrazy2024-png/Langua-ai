@@ -4,7 +4,7 @@ import { ChatMessage } from "../types";
 import { getLangCode, PERSONAS } from "../data";
 import { getPreferredProviderKey, setPreferredProviderKey, listProviders, gatewayProvider, getNativeStatus, pickAndLoadNativeModel, unloadNativeModel, streamGatewayChat, type AiProviderKey, type NativeStatus } from "../lib/aiProviders";
 import { apiFetch } from "../lib/net";
-import { getGatewayBaseUrl, setGatewayBaseUrl, getOpenRouterApiKey, setOpenRouterApiKey, getGeminiApiKey, setGeminiApiKey, getOllamaBaseUrl, setOllamaBaseUrl } from "../lib/config";
+import { getGatewayBaseUrl, setGatewayBaseUrl, getOpenRouterApiKey, setOpenRouterApiKey, getGeminiApiKey, setGeminiApiKey, getDeepSeekApiKey, setDeepSeekApiKey, getGroqApiKey, setGroqApiKey, getOllamaBaseUrl, setOllamaBaseUrl } from "../lib/config";
 import { startSpeechRecognition, stopNativeSpeech } from "../lib/nativeSpeech";
 import { getFrequentMistakes, logMistake } from "../languageMemoryStore";
 import { computeLevel } from "../levelStore";
@@ -12,6 +12,7 @@ import { getAccentTips } from "../accentCoach";
 import { listAvailableModels, type ModelInfo } from "../lib/modelManager";
 import { generateMistakePractice, type MistakeQuizQuestion } from "../lib/mistakePractice";
 import { buildContextWindow, summarizeOlderTurns } from "../lib/conversationContext";
+import { logEvent } from "../lib/debugLog";
 
 interface ChatTabProps {
   playSpeech: (text: string, id: string, langCode?: string, voiceOptions?: { pitch?: number; rate?: number; voiceHint?: string }, onEnd?: () => void) => void;
@@ -29,7 +30,7 @@ interface ConversationReport {
 }
 
 export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
-  const [dialect, setDialect] = useState(DIALECT_OPTIONS[0]);
+  const [dialect, setDialect] = useState(DIALECT_OPTIONS[0]!);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,8 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
   const [ollamaUrlSaved, setOllamaUrlSaved] = useState(false);
   const [openRouterKey, setOpenRouterKey] = useState(() => getOpenRouterApiKey());
   const [geminiKey, setGeminiKey] = useState(() => getGeminiApiKey());
+  const [deepSeekKey, setDeepSeekKey] = useState(() => getDeepSeekApiKey());
+  const [groqKey, setGroqKey] = useState(() => getGroqApiKey());
   const [cloudKeysSaved, setCloudKeysSaved] = useState(false);
   const providers = listProviders();
   const activeProvider = providers.find((p) => p.key === providerKey) ?? gatewayProvider;
@@ -228,7 +231,11 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
         // these are used in the prompt.
         knownMistakes: getFrequentMistakes(dialect.id, 3),
         levelHint: computeLevel(dialect.id),
-        conversationSummary: conversationSummaryRef.current ?? undefined
+        // exactOptionalPropertyTypes: omit the key entirely when there's
+        // no summary yet, rather than setting it to `undefined` - an
+        // optional `string` property may be *absent*, but explicitly
+        // assigning `undefined` to it is a distinct (and rejected) thing.
+        ...(conversationSummaryRef.current ? { conversationSummary: conversationSummaryRef.current } : {})
       };
 
       let replyText = "";
@@ -312,6 +319,7 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
       }
     } catch (err: any) {
       setError(err.message || "گفتگو با هوش مصنوعی ناموفق بود.");
+      logEvent("error", `ChatTab:${providerKey}`, err?.message || String(err));
       if (opts?.speaking) {
         triggerToast("⚠️ خطا در مکالمه صوتی — حالت مکالمه متوقف شد.");
         setSpeakingMode(false);
@@ -446,11 +454,13 @@ export default function ChatTab({ playSpeech, triggerToast }: ChatTabProps) {
         {(providerKey === "cloud" || providerKey === "auto") && (
           <div className="bg-[#090D16] border border-[#1E293B] rounded-xl p-2.5 space-y-2">
             <span className="text-[10px] text-[#94A3B8] block">
-              مسیر اینترنتی رایگان: ابتدا OpenRouter Free و سپس Gemini با سهمیه رایگان امتحان می‌شوند. کلید API را از سرویس مربوطه بگیرید؛ کلید فقط روی همین گوشی ذخیره می‌شود.
+              مسیر اینترنتی رایگان: به ترتیب OpenRouter Free، Gemini، DeepSeek و Groq (هرکدام کلید داشته باشد) امتحان می‌شوند. کلید API را از سرویس مربوطه بگیرید؛ کلید فقط روی همین گوشی ذخیره می‌شود.
             </span>
             <input type="password" dir="ltr" value={openRouterKey} onChange={(e) => { setOpenRouterKey(e.target.value); setCloudKeysSaved(false); }} placeholder="OpenRouter API key (اختیاری)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
             <input type="password" dir="ltr" value={geminiKey} onChange={(e) => { setGeminiKey(e.target.value); setCloudKeysSaved(false); }} placeholder="Gemini API key (اختیاری)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
-            <button onClick={() => { setOpenRouterApiKey(openRouterKey); setGeminiApiKey(geminiKey); setCloudKeysSaved(true); triggerToast("✅ کلیدهای اینترنتی ذخیره شد."); }} className="w-full bg-[#14B8A6] text-black font-black px-3 py-1.5 rounded-lg text-[10px]">
+            <input type="password" dir="ltr" value={deepSeekKey} onChange={(e) => { setDeepSeekKey(e.target.value); setCloudKeysSaved(false); }} placeholder="DeepSeek API key (اختیاری)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
+            <input type="password" dir="ltr" value={groqKey} onChange={(e) => { setGroqKey(e.target.value); setCloudKeysSaved(false); }} placeholder="Groq API key (اختیاری، رایگان)" className="w-full bg-[#141C2E] text-[11px] text-[#F8FAFC] border border-[#1E293B] rounded-lg px-2.5 py-1.5 outline-none" />
+            <button onClick={() => { setOpenRouterApiKey(openRouterKey); setGeminiApiKey(geminiKey); setDeepSeekApiKey(deepSeekKey); setGroqApiKey(groqKey); setCloudKeysSaved(true); triggerToast("✅ کلیدهای اینترنتی ذخیره شد."); }} className="w-full bg-[#14B8A6] text-black font-black px-3 py-1.5 rounded-lg text-[10px]">
               {cloudKeysSaved ? "ذخیره شد ✓" : "ذخیره کلیدها"}
             </button>
           </div>

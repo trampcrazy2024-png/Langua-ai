@@ -22,7 +22,8 @@
 
 import LocalAI from "../services/localAI";
 import { localAIChat } from "./localAIChat";
-import { apiUrl, getOpenRouterApiKey, getGeminiApiKey, getOllamaBaseUrl } from "./config";
+import { apiUrl, getOpenRouterApiKey, getGeminiApiKey, getDeepSeekApiKey, getGroqApiKey, getOllamaBaseUrl } from "./config";
+import { logEvent } from "./debugLog";
 
 export type AiProviderKey = "auto" | "gateway" | "native" | "cloud";
 
@@ -148,6 +149,46 @@ async function geminiText(prompt: string, maxTokens = 900): Promise<string> {
   return text;
 }
 
+async function deepSeekText(prompt: string, maxTokens = 900): Promise<string> {
+  const key = getDeepSeekApiKey();
+  if (!key) throw new Error("DEEPSEEK_KEY_MISSING");
+  const res = await fetchWithTimeout("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: maxTokens,
+    }),
+  });
+  const data: any = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}: ${data?.error?.message ?? "request failed"}`);
+  const text = data?.choices?.[0]?.message?.content;
+  if (typeof text !== "string" || !text.trim()) throw new Error("DeepSeek returned an empty response");
+  return text.trim();
+}
+
+async function groqText(prompt: string, maxTokens = 900): Promise<string> {
+  const key = getGroqApiKey();
+  if (!key) throw new Error("GROQ_KEY_MISSING");
+  const res = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: maxTokens,
+    }),
+  });
+  const data: any = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Groq HTTP ${res.status}: ${data?.error?.message ?? "request failed"}`);
+  const text = data?.choices?.[0]?.message?.content;
+  if (typeof text !== "string" || !text.trim()) throw new Error("Groq returned an empty response");
+  return text.trim();
+}
+
 async function freeCloudText(prompt: string, maxTokens = 900): Promise<string> {
   const errors: string[] = [];
   if (getOpenRouterApiKey()) {
@@ -158,8 +199,16 @@ async function freeCloudText(prompt: string, maxTokens = 900): Promise<string> {
     try { return await geminiText(prompt, maxTokens); }
     catch (e) { errors.push(String(e)); }
   }
-  if (!getOpenRouterApiKey() && !getGeminiApiKey()) {
-    throw new Error("برای مسیر اینترنتی مستقیم، کلید OpenRouter یا Gemini را در تنظیمات وارد کنید.");
+  if (getDeepSeekApiKey()) {
+    try { return await deepSeekText(prompt, maxTokens); }
+    catch (e) { errors.push(String(e)); }
+  }
+  if (getGroqApiKey()) {
+    try { return await groqText(prompt, maxTokens); }
+    catch (e) { errors.push(String(e)); }
+  }
+  if (!getOpenRouterApiKey() && !getGeminiApiKey() && !getDeepSeekApiKey() && !getGroqApiKey()) {
+    throw new Error("برای مسیر اینترنتی مستقیم، کلید OpenRouter، Gemini، DeepSeek یا Groq را در تنظیمات وارد کنید.");
   }
   throw new Error(`سرویس اینترنتی در دسترس نبود؛ مسیر بعدی را امتحان کنید. ${errors.join(" | ")}`);
 }
@@ -300,22 +349,63 @@ export const autoProvider: AiProvider = {
   label: "خودکار",
   description: "ابتدا مدل روی خود گوشی را امتحان می‌کند، سپس سرویس‌های اینترنتی رایگانِ تنظیم‌شده (OpenRouter/Gemini)، و در نهایت گیت‌وی را امتحان می‌کند.",
   async chat(payload) {
+    // Bug fix (real-device report): this used to swallow every attempt's
+    // actual error (native timeout/crash, Ollama unreachable, a wrong/
+    // rejected OpenRouter or Gemini key, quota errors, etc.) via
+    // console.warn and silently fall through to the gateway path - so no
+    // matter WHAT actually went wrong upstream, the learner always saw
+    // the exact same generic "گیت‌وی در دسترس نیست" message from
+    // gatewayProvider, even when e.g. their Gemini key was the real
+    // (and fixable) problem. That made every failure look identical and
+    // impossible to diagnose from the app itself. Now each attempted
+    // path's real error is kept, and only surfaced attempts (paths that
+    // were actually configured/loaded) are tried - so the final thrown
+    // error, if every configured path fails, actually explains why.
+    const attempts: { label: string; error: string }[] = [];
+
     const status = await getNativeStatus();
     if (status.available && status.modelLoaded) {
       try {
         return await nativeProvider.chat(payload);
-      } catch (e) {
-        console.warn("[ai-providers] native attempt failed, falling back to gateway:", e);
-        // fall through to gateway below
+      } catch (e: any) {
+        console.warn("[ai-providers] native attempt failed, falling back:", e);
+        attempts.push({ label: "روی خود گوشی", error: e?.message || String(e) });
+        logEvent("error", "AI:native", e?.message || String(e));
       }
     }
-    try { return await ollamaText(buildFlatPrompt(payload)); } catch (ollamaError) {
-      console.warn("[ai-providers] direct Ollama unavailable, falling back to internet cloud:", ollamaError);
+
+    if (getOllamaBaseUrl()) {
+      try { return await ollamaText(buildFlatPrompt(payload)); }
+      catch (e: any) {
+        console.warn("[ai-providers] direct Ollama unavailable, falling back:", e);
+        attempts.push({ label: "Ollama", error: e?.message || String(e) });
+        logEvent("error", "AI:ollama", e?.message || String(e));
+      }
     }
-    try { return await cloudProvider.chat(payload); } catch (cloudError) {
-      console.warn("[ai-providers] free cloud failed, falling back to gateway:", cloudError);
+
+    if (getOpenRouterApiKey() || getGeminiApiKey() || getDeepSeekApiKey() || getGroqApiKey()) {
+      try { return await cloudProvider.chat(payload); }
+      catch (e: any) {
+        console.warn("[ai-providers] free cloud failed, falling back:", e);
+        attempts.push({ label: "اینترنت رایگان (OpenRouter/Gemini/DeepSeek/Groq)", error: e?.message || String(e) });
+        logEvent("error", "AI:cloud", e?.message || String(e));
+      }
     }
-    return gatewayProvider.chat(payload);
+
+    try {
+      return await gatewayProvider.chat(payload);
+    } catch (e: any) {
+      attempts.push({ label: "گیت‌وی", error: e?.message || String(e) });
+      logEvent("error", "AI:gateway", e?.message || String(e));
+    }
+
+    if (attempts.length === 0) {
+      throw new Error(
+        "هیچ مسیر هوش مصنوعی تنظیم نشده — یک مدل GGUF روی گوشی بارگذاری کنید، یا کلید OpenRouter/Gemini را در تنظیمات وارد کنید، یا آدرس Ollama/گیت‌وی را تنظیم کنید."
+      );
+    }
+    const detail = attempts.map((a) => `${a.label}: ${a.error}`).join(" | ");
+    throw new Error(`هیچ‌کدام از مسیرهای هوش مصنوعی پاسخ ندادند — ${detail}`);
   },
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { speakNative, stopNativeSpeech } from "./lib/nativeSpeech";
@@ -7,19 +7,19 @@ import { PHRASES } from "./data";
 import { Phrase } from "./types";
 import { getSpeechSynthesis, newUtterance } from "./lib/speech";
 import { apiUrl } from "./lib/config";
+import { installGlobalErrorCapture } from "./lib/debugLog";
 
 // Import custom modular components
-import MatrixTab from "./components/MatrixTab";
 import TranslatorTab from "./components/translator/TranslatorTab";
 import OcrTab from "./components/OcrTab";
 import PodcastTab from "./components/PodcastTab";
 import SafetyTab from "./components/SafetyTab";
-import QuizTab from "./components/QuizTab";
 import ChatTab from "./components/ChatTab";
 import PlannerTab from "./components/PlannerTab";
 import WelcomeScreen from "./components/WelcomeScreen";
 import DialectCompareTab from "./components/DialectCompareTab";
 import ScenarioTab from "./components/ScenarioTab";
+import DebugLogTab from "./components/DebugLogTab";
 import { TabErrorBoundary } from "./components/TabErrorBoundary";
 
 export default function App() {
@@ -40,6 +40,13 @@ export default function App() {
   const [autoDetectedOffline, setAutoDetectedOffline] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [gatewayStatus, setGatewayStatus] = useState<string>("AI Gateway");
+
+  // Debug Log: capture uncaught exceptions/unhandled promise rejections
+  // app-wide, once, so the "گزارش خطا" tab has something even for errors
+  // that never pass through any component's own try/catch.
+  useEffect(() => {
+    installGlobalErrorCapture();
+  }, []);
 
   // Real network detection: if the phone actually loses internet (e.g. no
   // signal in a foreign country), the app finds out immediately from the
@@ -230,7 +237,14 @@ export default function App() {
     // native attempt runs in the background; onEnd fires once either path
     // actually finishes, exactly as before.
     stopNativeSpeech(); // cancel any in-progress native utterance first, mirroring tts.cancel() below
-    speakNative(text, resolvedLang, { rate: speechSpeed * (voiceOptions?.rate ?? 1), pitch: voiceOptions?.pitch }).then((handled) => {
+    // exactOptionalPropertyTypes: only set `pitch` on the options object
+    // when it's actually a number - passing `pitch: undefined` explicitly
+    // is rejected as distinct from omitting the property entirely.
+    const nativeSpeakOpts: { rate?: number; pitch?: number } = {
+      rate: speechSpeed * (voiceOptions?.rate ?? 1),
+    };
+    if (voiceOptions?.pitch !== undefined) nativeSpeakOpts.pitch = voiceOptions.pitch;
+    speakNative(text, resolvedLang, nativeSpeakOpts).then((handled) => {
       if (handled) onEnd?.();
     });
     if (Capacitor.isNativePlatform()) {
@@ -284,7 +298,7 @@ export default function App() {
   // (More) instead of being deleted - nothing here is removed, just no
   // longer competing for the same row as the core loop.
   const CORE_TABS = ["AI Chat", "Scenario", "Compare"];
-  const MORE_TABS = ["Translator", "Lingo Quiz", "Matrix", "Podcast", "Planner", "Sign OCR", "SOS Safety"];
+  const MORE_TABS = ["Translator", "Podcast", "Planner", "Sign OCR", "SOS Safety", "Debug Log"];
   const [showMoreTabs, setShowMoreTabs] = useState(false);
 
   /*
@@ -419,12 +433,12 @@ export default function App() {
                   : "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B]/30"
               }`}
             >
-              <span>{tab === "Matrix" ? "📊 Matrix" :
-                    tab === "Translator" ? "🗣️ Translator" :
+              <span>{tab === "Translator" ? "🗣️ Translator" :
                     tab === "Planner" ? "🗺️ Planner" :
                     tab === "Sign OCR" ? "📷 Sign OCR" :
                     tab === "Podcast" ? "🎧 Podcast" :
-                    tab === "SOS Safety" ? "🚨 SOS Safety" : "🎯 Lingo Quiz"}</span>
+                    tab === "SOS Safety" ? "🚨 SOS Safety" :
+                    tab === "Debug Log" ? "🐞 گزارش خطا" : tab}</span>
             </button>
           );
         })}
@@ -433,17 +447,6 @@ export default function App() {
       {/* 3. MAIN WORKSPACE */}
       <div className="w-full max-w-5xl mx-auto px-4 pt-5 flex-1">
         <TabErrorBoundary key={activeTab} label={activeTab}>
-        {activeTab === "Matrix" && (
-          <MatrixTab 
-            playSpeech={playSpeech}
-            triggerToast={triggerToast}
-            allPhrases={PHRASES}
-            setActiveTab={setActiveTab}
-            offlineMode={offlineMode}
-            setOfflineMode={setOfflineMode}
-          />
-        )}
-
         {activeTab === "Translator" && (
           <TranslatorTab 
             phrases={PHRASES}
@@ -510,11 +513,8 @@ export default function App() {
           />
         )}
 
-        {activeTab === "Lingo Quiz" && (
-          <QuizTab 
-            triggerToast={triggerToast}
-            offlineMode={offlineMode}
-          />
+        {activeTab === "Debug Log" && (
+          <DebugLogTab triggerToast={triggerToast} />
         )}
         </TabErrorBoundary>
       </div>

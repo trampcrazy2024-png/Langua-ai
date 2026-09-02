@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { 
-  ShieldAlert, Phone, Calculator, MapPin, AlertCircle, 
-  Send, Lock, Info, Landmark, Key, Eye, EyeOff, ShieldCheck, HeartPulse
+  ShieldAlert, Calculator, MapPin, 
+  Send, Lock, Landmark, ShieldCheck, HeartPulse
 } from "lucide-react";
 
 interface SafetyTabProps {
@@ -10,7 +10,6 @@ interface SafetyTabProps {
 }
 
 export default function SafetyTab({
-  playSpeech,
   triggerToast
 }: SafetyTabProps) {
   // SOS States
@@ -72,7 +71,7 @@ export default function SafetyTab({
         const body = encodeURIComponent(
           `${sosMessages[sosType]} | موقعیت من: ${mapsLink}`
         );
-        const recipient = contacts.split(",")[0].trim().replace(/[^0-9+]/g, "");
+        const recipient = (contacts.split(",")[0] ?? "").trim().replace(/[^0-9+]/g, "");
         // Opens the phone's real SMS app pre-filled with the true GPS link —
         // the user only has to tap Send. This uses the normal cellular SMS
         // network (no internet required), unlike the old fake "satellite"

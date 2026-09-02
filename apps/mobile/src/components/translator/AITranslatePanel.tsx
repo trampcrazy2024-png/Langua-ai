@@ -1,4 +1,3 @@
-import React from "react";
 import { Sparkles, RefreshCw, Copy, Volume2, ShieldAlert } from "lucide-react";
 
 export interface AITranslatePanelProps {

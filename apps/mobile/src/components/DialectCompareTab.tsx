@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Volume2, Layers, Mic } from "lucide-react";
 import { DIALECT_COMPARISONS, getLangCode } from "../data";
 import { similarityScore, feedbackForScore } from "../speechUtils";
@@ -12,8 +12,8 @@ interface DialectCompareTabProps {
 }
 
 export default function DialectCompareTab({ playSpeech, triggerToast }: DialectCompareTabProps) {
-  const [activeId, setActiveId] = useState(DIALECT_COMPARISONS[0].id);
-  const active = DIALECT_COMPARISONS.find((c) => c.id === activeId) || DIALECT_COMPARISONS[0];
+  const [activeId, setActiveId] = useState(DIALECT_COMPARISONS[0]!.id);
+  const active = DIALECT_COMPARISONS.find((c) => c.id === activeId) ?? DIALECT_COMPARISONS[0]!;
   const [practicingKey, setPracticingKey] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, { label: string; color: string; heard?: string }>>({});
 
@@ -99,17 +99,20 @@ export default function DialectCompareTab({ playSpeech, triggerToast }: DialectC
                   {entry.dialect}
                 </span>
               </div>
-              {results[entryKey] && (
-                <div
-                  className="text-[11px] font-bold px-2 py-1.5 rounded-lg bg-[#090D16] border"
-                  style={{ borderColor: results[entryKey].color, color: results[entryKey].color }}
-                >
-                  {results[entryKey].label}
-                  {results[entryKey].heard && (
-                    <span className="block text-[#94A3B8] font-normal mt-0.5">شما گفتید: «{results[entryKey].heard}»</span>
-                  )}
-                </div>
-              )}
+              {(() => {
+                const result = results[entryKey];
+                return result && (
+                  <div
+                    className="text-[11px] font-bold px-2 py-1.5 rounded-lg bg-[#090D16] border"
+                    style={{ borderColor: result.color, color: result.color }}
+                  >
+                    {result.label}
+                    {result.heard && (
+                      <span className="block text-[#94A3B8] font-normal mt-0.5">شما گفتید: «{result.heard}»</span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           );
         })}

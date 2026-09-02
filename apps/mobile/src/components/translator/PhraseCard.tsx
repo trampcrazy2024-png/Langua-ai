@@ -10,7 +10,7 @@ export interface PhraseCardProps {
   isCustom: boolean;
   speakingMode: boolean;
   revealed: boolean;
-  practiceResult?: PracticeView;
+  practiceResult?: PracticeView | undefined;
   busy: boolean;
   onToggleFav(): void;
   onDelete(): void;

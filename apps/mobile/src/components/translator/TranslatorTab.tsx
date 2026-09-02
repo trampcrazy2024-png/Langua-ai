@@ -249,7 +249,7 @@ export default function TranslatorTab({
       scenarioText={scenarioText} setScenarioText={setScenarioText} dialect={genDialect} setDialect={setGenDialect}
       speakerGender={genSpeakerGender} setSpeakerGender={setGenSpeakerGender} listenerGender={genListenerGender} setListenerGender={setGenListenerGender}
       loading={genLoading} error={genError} results={genResults} onSubmit={() => void handleGenerateSubmit()}
-      onSave={(item) => { addCustomPhrase({ category: "conversational", arabic: item.arabic, farsi: item.farsi, arabicPhonetic: item.arabicPhonetic, arabicPhoneticLatin: item.arabicPhoneticLatin, english: item.english, dialect: genDialect.split(" ")[0], audioTips: item.audioTips }); triggerToast("📌 ذخیره شد."); }}
+      onSave={(item) => { addCustomPhrase({ category: "conversational", arabic: item.arabic, farsi: item.farsi, arabicPhonetic: item.arabicPhonetic, arabicPhoneticLatin: item.arabicPhoneticLatin, english: item.english, dialect: genDialect.split(" ")[0] ?? genDialect, ...(item.audioTips !== undefined ? { audioTips: item.audioTips } : {}) }); triggerToast("📌 ذخیره شد."); }}
       onPlay={(t) => playSpeech(t, "gen_0", detectLangCode(t))}
     />}
 

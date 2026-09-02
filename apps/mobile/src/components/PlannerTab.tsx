@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Compass, Sparkles, ShieldAlert, RefreshCw, Package, Lightbulb, CalendarDays } from "lucide-react";
 import { apiFetch } from "../lib/net";
 

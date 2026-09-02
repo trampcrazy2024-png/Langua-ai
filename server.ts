@@ -394,7 +394,7 @@ export const routes: Record<string, (body: any) => Promise<unknown>> = {
 };
 
 export const server = createServer(async (req, res) => {
-  const url = (req.url ?? "/").split("?")[0];
+  const url = (req.url ?? "/").split("?")[0] ?? "/";
 
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
@@ -508,7 +508,7 @@ export const server = createServer(async (req, res) => {
     return;
   }
 
-  const handler = url ? routes[url] : undefined;
+  const handler = routes[url];
   if (!handler) {
     send(res, 404, { error: "Not found" });
     return;

@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 
-import androidx.activity.OnBackPressedCallback;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -43,32 +41,6 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
 
         getBridge().getWebView().setWebChromeClient(new BridgeWebChromeClientWithMic(getBridge()));
-
-        getOnBackPressedDispatcher().addCallback(this,
-                new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        if (getBridge() == null || getBridge().getWebView() == null) {
-                            finish();
-                            return;
-                        }
-
-                        android.webkit.WebView webView = getBridge().getWebView();
-
-                        if (webView.canGoBack()) {
-                            webView.goBack();
-                            return;
-                        }
-
-                        /*
-                         * Let the WebView/app consume the first back press.
-                         * Only finish when there is genuinely no application
-                         * history to return to.
-                         */
-                        setEnabled(false);
-                        getOnBackPressedDispatcher().onBackPressed();
-                    }
-                });
     }
 
     /**

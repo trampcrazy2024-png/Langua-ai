@@ -33,6 +33,7 @@
 
 import { Capacitor, registerPlugin } from "@capacitor/core";
 import { SpeechRecognition as NativeSTT } from "@capacitor-community/speech-recognition";
+import { logEvent } from "./debugLog";
 interface NativeTTSPlugin {
   speak(options: { text: string; lang: string; rate?: number; pitch?: number }): Promise<{ ok: boolean }>;
   stop(): Promise<{ ok: boolean }>;
@@ -102,10 +103,9 @@ function startNative(opts: RecognitionOptions): RecognitionHandle {
     } catch (err: any) {
       if (!stopped) {
         const isPermission = err?.message === "PERMISSION_DENIED";
-        opts.onError?.(
-          isPermission ? "اجازه دسترسی به میکروفون داده نشد." : (err?.message || "تشخیص گفتار ناموفق بود."),
-          false,
-        );
+        const message = isPermission ? "اجازه دسترسی به میکروفون داده نشد." : (err?.message || "تشخیص گفتار ناموفق بود.");
+        logEvent("error", "STT:native", err?.message || String(err));
+        opts.onError?.(message, false);
       }
     } finally {
       if (!stopped) opts.onEnd?.();
@@ -145,6 +145,7 @@ function startWeb(opts: RecognitionOptions): RecognitionHandle | null {
     };
     recognition.onerror = (event: any) => {
       const isNoSpeech = event?.error === "no-speech";
+      logEvent("warn", "STT:web", String(event?.error || "unknown"));
       opts.onError?.(isNoSpeech ? "چیزی شنیده نشد." : "تشخیص گفتار ناموفق بود.", isNoSpeech);
     };
     recognition.onend = () => {
@@ -153,6 +154,7 @@ function startWeb(opts: RecognitionOptions): RecognitionHandle | null {
     };
     recognition.start();
   }).catch(() => {
+    logEvent("error", "STT:web", "getUserMedia rejected (microphone permission denied)");
     if (!stopped) opts.onError?.("اجازه دسترسی به میکروفون داده نشد.", false);
   });
 
@@ -188,7 +190,8 @@ export async function speakNative(
       rate: opts?.rate ?? 1.0,
       pitch: opts?.pitch ?? 1.0,
     });
-  } catch {
+  } catch (err) {
+    logEvent("warn", "TTS:native", err instanceof Error ? err.message : String(err));
     // Swallow and still report "handled natively" - a native TTS failure
     // (e.g. no voice pack for this language installed) shouldn't make the
     // caller retry via the broken WebView speechSynthesis path too.

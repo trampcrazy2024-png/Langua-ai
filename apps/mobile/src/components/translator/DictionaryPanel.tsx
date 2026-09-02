@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, Plus } from "lucide-react";
 import { Phrase } from "../../types";
 import { CATEGORIES, DIALECT_FILTERS } from "../../data";
