@@ -1,6 +1,6 @@
 package com.lingua.assistant.plugins;
 
-import android.speech.TextToSpeech;
+import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
 import com.getcapacitor.JSObject;
